@@ -1,4 +1,5 @@
 #include "s21_string.h"
+#include <stdio.h>
 
 void *s21_memchr(const void *str, int c, s21_size_t n) {
   char *line = S21_NULL;
@@ -751,3 +752,399 @@ int s21_sprintf(char *str, const char *format, ...) {
   int result = str - start_str;
   return result;
 }
+
+int s21_sscanf(const char* source, const char *format, ...){
+va_list args;
+
+flagscanf sscan_Flags={{0}, 0};
+
+va_start(args, format);
+// char* s=va_arg(args, char*);
+// printf("STRING FROM MAIN=%s\n", s);
+// int* x=va_arg(args, int*);
+// printf("INT X IN MAIN=%d\n", *x);
+char* tmp;
+flagscanf Flagscanf={{0}, 0};
+while(*format!='\0'){
+    printf("here?\n");
+    if(*format=='%'){
+        format++;
+        Flagscanf=scanfparser_flags(&format); // заполняем от ' ' до 0 почему не растет указатель я разименовываю 1 раз, значит должен расти формат
+        scanfparser_spec(format, &Flagscanf); // заполняем спецификаторы например d или s
+        //Flagscanf=scanfparser(format);
+        scanf_concat_type(Flagscanf, args, &source); //возвращаем то, что мы пишем в переменную,
+        //va_arg(args,char*);
+        printf("tmp=%s\n", tmp);
+        //как вообще подставить в функцию имя переменной когда оно само переменная?
+        //strcat(, tmp);
+        //move_str=strlen(tmp);
+
+        
+    }
+    format++;
+
+
+}
+printf("Flagscanf:\nbase.integer=%d\nbase.string=%d\nfplus=%d\n", Flagscanf.base.integer, Flagscanf.base.string, Flagscanf.fplus);
+//printf("Flagscanf:\nbase->integer=%d\n", Flagscanf.base.integer);
+}
+
+flagscanf scanfparser_flags(const char** format){
+    //(*format)++;
+    flagscanf Flags={0};
+    
+    while(**format==' '||**format=='-'||**format=='+'||**format=='#'||**format=='0'){
+        switch(**format){
+            case' ':
+            Flags.fspace=1;
+            break;
+            case'-':
+            Flags.fminus=1;
+            break;
+            case'+':
+            Flags.fplus=1;
+            break;
+            case'#':
+            Flags.fsharp=1;
+            break;
+            case'0':
+            Flags.fzero=1;
+            break;
+        }
+        (*format)++;
+    }
+    return Flags;
+
+}
+
+void scanfparser_spec(const char *format, flagscanf* Flags){
+        
+        //format++;
+        while(*format!='\0'&&*format!='%'){
+            printf("here?:82");
+        switch(*format){
+            case'[':
+                // logic parsing regular
+                Flags->regular == NULL;
+                break;
+            default:
+                Flags->base = parser(&format, Flags->base); 
+        }
+    //format++;
+
+
+    }
+       }      
+
+ void scanf_concat_type(flagscanf Flags, va_list arg, const char** source){
+    void* add_this=malloc(10000);
+    if(Flags.base.integer==1){
+       add_this=(void*)scanf_write_int(Flags, arg, source);
+    }
+    if(Flags.base.string==1){
+        add_this=scanf_write_string(Flags, arg, source);
+    }
+    if(Flags.base.decimal_octal_hex==1){
+        add_this=(void*)scanf_write_decimal_octal_hex(arg, source);
+        // printf("ADDTHIS=%d\n", *((int*)add_this)); interesting segfault 
+    }
+    if(Flags.base.e==1){
+        sscanf_write_e(arg, source);
+    }
+   
+    //return (void*)add_this; //мы допишем это в str вместо %d
+   }   
+
+   flags    parser(const char **format, flags Flags){
+        //flags Flags={0};
+        //(*format)++;
+        while(**format=='d'||**format=='s'||**format=='i'||**format=='e'){
+           printf("here?:parser163");
+        switch(**format){
+            
+        case 'd':
+            Flags.integer=1;
+            Flags.move_format=2;
+            break;
+        case 's':
+            Flags.string=1;
+            Flags.move_format=2;
+            break;  
+        case 'i':
+            Flags.decimal_octal_hex=1;
+            break;   
+        case 'e':
+            Flags.e=1;
+            break;     
+        default:
+            break;  }
+            
+            (*format)++;
+    }
+    return Flags;
+
+
+    }
+
+int* scanf_write_int(flagscanf Flags, va_list arg, const char** source ){
+    int* i=va_arg(arg, int*);// какое будет поведение у  va_arg  если тип аргумента не соответствует, например мы указываем int* а там лежит  char*
+    printf("VALUE OF INT I FROM MAIN=%d\n", *i);
+    while(**source==' ')(*source)++;
+    int i_i;
+    char buffer[1000];
+    int count=0;
+    char* pbuffer=buffer;
+    int is_int=0;//вырастет только если была запись в int
+    if(**source=='\0'||**source==' '||(**source>=0&&**source<=57&&**source!=32)){ //это нужно чтобы не двигало курсор если мы пытаемся прочитать строку как d
+    while(**source!='\0'&&**source!=' '){
+        if(**source>=0&&**source<=57&&**source!=32){
+            is_int=1;
+            while(**source!=' '){
+                *pbuffer=**source;
+                pbuffer++;
+                (*source)++;
+               count++;
+            }
+            
+        i_i=atoi(buffer); //buffer почему-то остается в памяти, поэтому заводим счетчик count и зануляем buffer после atoi
+        while(count>0){
+            buffer[count]='\0';
+            count--;
+        }
+        printf("WRITTEN INT=%d\n", i_i);
+        
+        break;}
+        
+       (*source)++;
+        
+    }
+    }
+
+    if(is_int)*i=i_i;
+    
+    printf("INT WRITTEN TO MAIN VAR=%d\n", *i);
+
+    
+    //x=itoa(va_arg(arg, int), x, 10);
+    
+    
+return i;
+
+}
+
+char* scanf_write_string(flagscanf Flags, va_list arg, const char** source){
+    char* variable=va_arg(arg, char*);
+    char buffer[300];
+    int wcount=0;//счетчик сколько раз мы записали, чтобы отмотать
+    while(**source!=' '){ //пишем из source в буфер, а почему нельзя сразу писать в variable?
+        variable[wcount]=**source;
+        wcount++;
+        (*source)++;
+
+
+    }
+
+    variable[wcount]='\0';
+    // while(wcount>=0){
+    // variable[wcount]=buffer[wcount];//segfault
+    //     wcount--;
+
+    // }
+   
+    
+        printf("BUFFER=%s\n", buffer);
+        printf("VARIABLE=%s\n", variable);
+
+    
+    
+return variable;
+
+}
+
+int* scanf_write_decimal_octal_hex(va_list arg, const char** source){
+    int* variable_adress=va_arg(arg, int*);
+    int buffer_integer;
+    while(**source==' ')(*source)++;
+    char buffer[1000];
+    char* pbuffer=buffer;
+    int is_int=0;
+    int is_hex=0;
+    int is_octal=0;
+    if(**source==' '||(**source>=0&&**source<=57&&**source!=32)){
+        while(**source!='\0'&&**source!=' '){
+            if(**source>=0&&**source<=57&&is_int_f(**source)){
+                if(**source=='0'&&*(*source+1)=='x'){
+                is_hex=1;(*source)=(*source)+2;}
+                if(**source=='0'&&is_int_f(*(*source)+1)){
+                   // if(**source=='0'&&is_int_f(&((*source)+1))){ почему так нельзя хотел передавать функции указатель на указатель
+                is_octal=1;(*source)++;
+                }
+             if(!is_hex)is_int=1;//пишем в variable только если флаг поднят, если я сделаю int is_int прямо сдесь это плохо, это значит будет переинициализация каждый цикл или норм и оно не будет нагружать программу и инициализирует только 1 раз?
+             while(**source!=' '){
+                *pbuffer=**source;
+               //cannot do that? (&buffer)++;
+               //cannot do that? buffer++;
+               //must make char* pbuffer=buffer ?
+                (*source)++;
+                pbuffer++;
+                //count++;
+
+             }
+            *pbuffer='\0';
+             
+            }
+        }
+
+    }
+    buffer_integer=atoi(buffer);
+
+    if(is_hex){
+        *variable_adress=dec_convert(buffer_integer, 16);
+    }
+    if(is_octal){
+        *variable_adress=dec_convert(buffer_integer, 8);
+    }
+
+    
+
+}
+
+int is_int_f(char c){
+    int x=0;
+    if(c>=0&&c<=57&&c!=32)
+    x=1;
+    return x;
+}
+
+int dec_convert(int input, int base){
+    int power=0;
+    int dec=0;
+
+    while(input>0){
+    dec=dec+(input%10)*s21_pow(base, power);
+    input=input/10;
+    power++;}
+    return dec;
+}
+
+void sscanf_write_e(va_list arg, const char** source){
+    float* variable_address=va_arg(arg, float*);
+    float buffer_float;
+    
+    while(**source==' ')(*source)++;
+    char buffer[1000];
+    char* pbuffer=buffer;
+    number_type type={0};
+    if(**source>=0&&**source<=57&&**source!=32){
+        while(**source!='\0'&&**source!=' '){
+            if(**source=='0'&&*(*source+1)=='x'){
+                type.is_hex=1; (*source)=(*source)+2;}//skip 0x to number
+            
+            if(**source=='0'&&is_int_f(*(*source)+1)){
+                type.is_octal=1;(*source)++;
+            }
+            for(int i=1;*(*source+i)!=32;i++){ //тут если вместо 32 поставить ' ' почему то выкидывает из цикла на одну итерацию позже
+                if(*(*source+i)=='e'||*(*source+i)=='E'){
+                type.is_scientific=1;printf("is scientific\n");
+                
+                }
+            }
+            if(!type.is_hex&&!type.is_octal&&!type.is_scientific)type.is_int=1;
+            while(**source!=32){
+                *pbuffer=**source;
+                (*source)++;
+                pbuffer++;
+            }
+            *pbuffer='\0';
+    }
+        }
+        int integer_from_string=atoi(buffer);
+    if(type.is_scientific)
+    *variable_address=scientific_to_float(buffer);  
+    
+            
+    }
+
+    float scientific_to_float(char* string){
+    char pre_dot[1000];
+    float pre_dot_float;
+    char post_dot[1000]="000000";
+    float post_dot_float;
+    char exponent[1000];
+    int count=0;
+    while(*string!='.'){
+        pre_dot[count]=*(string);
+        string++;
+        count++;
+
+    }
+    pre_dot[count]='\0';
+    count=0;
+    string++;
+    while(*string!='e'&&*string!='E'){
+        post_dot[count]=*string;
+        string++;count++;
+    }
+    post_dot[count]='\0';
+    count=0;
+    while(*string!='+'&&*string!='-'){
+        *(string++);
+    }
+
+    while(*string!=' '){
+        exponent[count]=*(string);
+        count++;string++;
+    }
+    exponent[count]='\0';
+ int i=0; //количество знаков, заводим для знака после точки
+ pre_dot_float=(float)char_to_dec(&i, pre_dot);
+ i=0;
+ post_dot_float=(float)char_to_dec(&i, post_dot);
+ while(i>0){
+    post_dot_float /=10;
+    i--;
+
+ }
+ float return_this=pre_dot_float+post_dot_float;
+ return_this=exponent_f(exponent, return_this);
+
+
+    
+
+    // printf("\n\n post_dot_float=%f", pre_dot_float);
+    // printf("\n\n post_dot_float=%f", post_dot_float);
+    // printf("\n\npredot=%s\n\n", pre_dot);
+    // printf("\n\npostdot=%s\n\n", post_dot);
+    // printf("\n\nexponent=%s\n\n", exponent);
+    return return_this;
+
+   }
+
+   long double char_to_dec(int* i, char str[]){
+    long double result = 0.0;
+    while(*str>=48&&*str<=57) {//0 to 9
+    (*i)++;
+    result *= 10;
+    result += *str-'0';
+    str++;
+      }
+       return result;
+  }
+
+  long double exponent_f(char exp[], float pre_plus_post){
+    int is_negative=0; 
+    float return_this;
+    if(*exp=='-'){
+            is_negative=1; }  
+            exp++;
+    
+if(!is_negative){
+    printf("AAAAA%lf", (((float)atoi(exp))*10));
+return_this=pre_plus_post*s21_pow(10, (float)atoi(exp));
+
+};
+printf("\n\nEXPONENTED=%f\n\n", return_this);
+return return_this;
+  }
+
+  

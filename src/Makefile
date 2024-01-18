@@ -2,6 +2,8 @@ CC = gcc
 CFLAGS = -std=c11 -Wall -Wextra -Werror
 CCOVTEST= -fprofile-arcs -ftest-coverage
 LIBS = -lm
+in_progress:
+	gcc main.c s21_string.c
 
 all: s21_string.a
 

@@ -19,6 +19,29 @@ struct flag_type {
 
 typedef struct flag_type flag_t;
 
+typedef struct flags{
+    int integer;
+    int string;
+    int decimal_octal_hex;
+    int move_format;
+    int e;
+
+} flags;
+
+typedef struct flagscanf{
+    flags base;
+    int fspace, fminus, fplus, fsharp, fzero;
+    
+    char* regular;
+} flagscanf;
+
+typedef struct {
+    int is_int;
+    int is_hex;
+    int is_octal;
+    int is_scientific;
+} number_type;
+
 void *s21_memchr(const void *str, int c, s21_size_t n);
 int s21_memcmp(const void *str1, const void *str2, s21_size_t n);
 void *s21_memcpy(void *dest, const void *src, s21_size_t n);
@@ -44,6 +67,22 @@ void s21_itos(char *str, long long int num, flag_t *flags);
 void s21_ftos(char *str, double num, flag_t *flags);
 void s21_uitos(char *str, unsigned long num, flag_t *flags);
 int s21_sprintf(char *str, const char *format, ...);
+int s21_sscanf(const char* source, const char *format, ...);
+flagscanf scanfparser_flags(const char** format);
+void scanfparser_spec(const char *format, flagscanf* Flags);
+void scanf_concat_type(flagscanf Flags, va_list arg, const char** source);
+flags    parser(const char **format, flags Flags);
+int* scanf_write_int(flagscanf Flags, va_list arg, const char** source );
+char* scanf_write_string(flagscanf Flags, va_list arg, const char** source);
+int* scanf_write_decimal_octal_hex(va_list arg, const char** source);
+int is_int_f(char c);
+int dec_convert(int input, int base);
+float scientific_to_float(char* string);
+long double char_to_dec(int* i, char str[]);
+long double exponent_f(char exp[], float pre_plus_post);
+void sscanf_write_e(va_list arg, const char** source);
+
+
 
 #define S21EPERM_STR "Operation not permitted"
 #define S21ENOENT_STR "No such file or directory"
