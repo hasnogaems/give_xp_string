@@ -933,6 +933,9 @@ return i;
 }
 
 char* scanf_write_string(flagscanf Flags, va_list arg, const char** source){
+    while(**source==' '){
+      (*source)++;
+    }
     char* variable=va_arg(arg, char*);
     char buffer[300];
     int wcount=0;//счетчик сколько раз мы записали, чтобы отмотать

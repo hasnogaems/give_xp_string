@@ -32,13 +32,16 @@ clang:
 	clang-format -n *.c *.h
 
 clean:
-	rm -f *.a
-	rm -f *.o
+	rm -f "*.a"
+	rm -f "*.o"
 	rm -f test
-	rm -f *.gc*
 	rm -f gcov_report.html
-	rm -f gcov_report
+	rm -f ./gcov_report*
 	rm -f test.info
 	rm -f -R report
+	rm -f ./-lcheck-s21_string_tests.gcno
+	rm -f *.gc*
+	rm -f main
+	rm -f a.out
 
 rebuild: clean all
