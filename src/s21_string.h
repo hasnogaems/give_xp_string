@@ -31,7 +31,7 @@ typedef struct flags{
 typedef struct flagscanf{
     flags base;
     int fspace, fminus, fplus, fsharp, fzero;
-    
+    int failed;
     char* regular;
 } flagscanf;
 
@@ -70,17 +70,17 @@ int s21_sprintf(char *str, const char *format, ...);
 int s21_sscanf(const char* source, const char *format, ...);
 flagscanf scanfparser_flags(const char** format);
 void scanfparser_spec(const char *format, flagscanf* Flags);
-void scanf_concat_type(flagscanf Flags, va_list arg, const char** source);
+void scanf_concat_type(flagscanf* Flags, va_list arg, const char** source);
 flags    parser(const char **format, flags Flags);
-int* scanf_write_int(flagscanf Flags, va_list arg, const char** source );
-char* scanf_write_string(flagscanf Flags, va_list arg, const char** source);
-int* scanf_write_decimal_octal_hex(va_list arg, const char** source);
+int* scanf_write_int(flagscanf* Flags, va_list arg, const char** source );
+char* scanf_write_string(flagscanf* Flags, va_list arg, const char** source);
+int* scanf_write_decimal_octal_hex(va_list arg, const char** source, flagscanf*);
 int is_int_f(char c);
 int dec_convert(int input, int base);
 float scientific_to_float(char* string);
 long double char_to_dec(int* i, char str[]);
 long double exponent_f(char exp[], float pre_plus_post);
-void sscanf_write_e(va_list arg, const char** source);
+void sscanf_write_e(va_list arg, const char** source, flagscanf*);
 
 
 

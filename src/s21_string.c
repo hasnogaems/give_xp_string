@@ -1,5 +1,6 @@
 #include "s21_string.h"
 #include <stdio.h>
+#include <math.h>
 
 void *s21_memchr(const void *str, int c, s21_size_t n) {
   char *line = S21_NULL;
@@ -767,12 +768,12 @@ char* tmp;
 flagscanf Flagscanf={{0}, 0};
 while(*format!='\0'){
     printf("here?\n");
-    if(*format=='%'){
+    if(*format=='%'&&Flagscanf.failed==0){
         format++;
         Flagscanf=scanfparser_flags(&format); // заполняем от ' ' до 0 почему не растет указатель я разименовываю 1 раз, значит должен расти формат
         scanfparser_spec(format, &Flagscanf); // заполняем спецификаторы например d или s
         //Flagscanf=scanfparser(format);
-        scanf_concat_type(Flagscanf, args, &source); //возвращаем то, что мы пишем в переменную,
+        scanf_concat_type(&Flagscanf, args, &source); //возвращаем то, что мы пишем в переменную,
         //va_arg(args,char*);
         printf("tmp=%s\n", tmp);
         //как вообще подставить в функцию имя переменной когда оно само переменная?
@@ -836,20 +837,20 @@ void scanfparser_spec(const char *format, flagscanf* Flags){
     }
        }      
 
- void scanf_concat_type(flagscanf Flags, va_list arg, const char** source){
+ void scanf_concat_type(flagscanf* Flags, va_list arg, const char** source){
     void* add_this=malloc(10000);
-    if(Flags.base.integer==1){
+    if(Flags->base.integer==1){
        add_this=(void*)scanf_write_int(Flags, arg, source);
     }
-    if(Flags.base.string==1){
+    if(Flags->base.string==1){
         add_this=scanf_write_string(Flags, arg, source);
     }
-    if(Flags.base.decimal_octal_hex==1){
-        add_this=(void*)scanf_write_decimal_octal_hex(arg, source);
+    if(Flags->base.decimal_octal_hex==1){
+        add_this=(void*)scanf_write_decimal_octal_hex(arg, source, Flags);
         // printf("ADDTHIS=%d\n", *((int*)add_this)); interesting segfault 
     }
-    if(Flags.base.e==1){
-        sscanf_write_e(arg, source);
+    if(Flags->base.e==1){
+        sscanf_write_e(arg, source, Flags);
     }
    
     //return (void*)add_this; //мы допишем это в str вместо %d
@@ -886,7 +887,7 @@ void scanfparser_spec(const char *format, flagscanf* Flags){
 
     }
 
-int* scanf_write_int(flagscanf Flags, va_list arg, const char** source ){
+int* scanf_write_int(flagscanf* Flags, va_list arg, const char** source ){
     int* i=va_arg(arg, int*);// какое будет поведение у  va_arg  если тип аргумента не соответствует, например мы указываем int* а там лежит  char*
     printf("VALUE OF INT I FROM MAIN=%d\n", *i);
     while(**source==' ')(*source)++;
@@ -932,7 +933,7 @@ return i;
 
 }
 
-char* scanf_write_string(flagscanf Flags, va_list arg, const char** source){
+char* scanf_write_string(flagscanf* Flags, va_list arg, const char** source){
     while(**source==' '){
       (*source)++;
     }
@@ -964,7 +965,7 @@ return variable;
 
 }
 
-int* scanf_write_decimal_octal_hex(va_list arg, const char** source){
+int* scanf_write_decimal_octal_hex(va_list arg, const char** source, flagscanf* Flags){
     int* variable_adress=va_arg(arg, int*);
     int buffer_integer;
     while(**source==' ')(*source)++;
@@ -1030,15 +1031,17 @@ int dec_convert(int input, int base){
     return dec;
 }
 
-void sscanf_write_e(va_list arg, const char** source){
+void sscanf_write_e(va_list arg, const char** source, flagscanf* Flags){
+    Flags->failed=1;
     float* variable_address=va_arg(arg, float*);
     float buffer_float;
     
     while(**source==' ')(*source)++;
-    char buffer[1000];
+    char buffer[1000000];
     char* pbuffer=buffer;
     number_type type={0};
     if(**source>=0&&**source<=57&&**source!=32){
+        Flags->failed=0;
         while(**source!='\0'&&**source!=' '){
             if(**source=='0'&&*(*source+1)=='x'){
                 type.is_hex=1; (*source)=(*source)+2;}//skip 0x to number
@@ -1063,17 +1066,42 @@ void sscanf_write_e(va_list arg, const char** source){
         }
         int integer_from_string=atoi(buffer);
     if(type.is_scientific)
-    *variable_address=scientific_to_float(buffer);  
+    *variable_address=scientific_to_float(buffer); 
+    if(Flags->failed==1){
+        if((s21_strncmp(*source, "inf", 3)==0) ||
+        (s21_strncmp(*source, "INF", 3)==0) ||
+        (s21_strncmp(*source, "Inf", 3)==0) ||
+        (s21_strncmp(*source, "inF", 3)==0) ||
+        (s21_strncmp(*source, "InF", 3)==0) ||
+        (s21_strncmp(*source, "iNF", 3)==0))
+        {
+            *variable_address=INFINITY;
+            Flags->failed=0;
+            *source += 3;
+        }
+    if((s21_strncmp(*source, "nan", 3)==0) ||
+        (s21_strncmp(*source, "NAN", 3)==0) ||
+        (s21_strncmp(*source, "NaN", 3)==0) ||
+        (s21_strncmp(*source, "Nan", 3)==0) ||
+        (s21_strncmp(*source, "naN", 3)==0) ||
+        (s21_strncmp(*source, "nAN", 3)==0) )
+        {
+            *variable_address=NAN;
+            Flags->failed=0;
+            *source += 3;
+        }    
+
+    } 
     
             
     }
 
     float scientific_to_float(char* string){
-    char pre_dot[1000];
+    char pre_dot[1000000];//тут был stack smashing если маленькие размеры массивов
     float pre_dot_float;
-    char post_dot[1000]="000000";
+    char post_dot[1000000]="000000";
     float post_dot_float;
-    char exponent[1000];
+    char exponent[1000000];
     int count=0;
     while(*string!='.'){
         pre_dot[count]=*(string);
