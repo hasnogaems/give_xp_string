@@ -766,8 +766,11 @@ va_start(args, format);
 // printf("INT X IN MAIN=%d\n", *x);
 char* tmp;
 flagscanf Flagscanf={{0}, 0};
-while(*format!='\0'){
+while(*format!='\0'&&*source!='\0'){
     printf("here?\n");
+    while(*format==*source&&*format!='%'){
+      format++; source++;
+    }
     if(*format=='%'&&Flagscanf.failed==0){
         format++;
         Flagscanf=scanfparser_flags(&format); // заполняем от ' ' до 0 почему не растет указатель я разименовываю 1 раз, значит должен расти формат
@@ -900,7 +903,7 @@ int* scanf_write_int(flagscanf* Flags, va_list arg, const char** source ){
     while(**source!='\0'&&**source!=' '){
         if(**source>=0&&**source<=57&&**source!=32){
             is_int=1;
-            while(**source!=' '){
+            while(**source!=' '&&**source!='\0'){
                 *pbuffer=**source;
                 pbuffer++;
                 (*source)++;
@@ -940,7 +943,7 @@ char* scanf_write_string(flagscanf* Flags, va_list arg, const char** source){
     char* variable=va_arg(arg, char*);
     char buffer[300];
     int wcount=0;//счетчик сколько раз мы записали, чтобы отмотать
-    while(**source!=' '){ //пишем из source в буфер, а почему нельзя сразу писать в variable?
+    while(**source!=' '&&**source!='\0'){ //пишем из source в буфер, а почему нельзя сразу писать в variable?
         variable[wcount]=**source;
         wcount++;
         (*source)++;
@@ -1037,7 +1040,7 @@ void sscanf_write_e(va_list arg, const char** source, flagscanf* Flags){
     float buffer_float;
     
     while(**source==' ')(*source)++;
-    char buffer[1000000];
+    char buffer[100000];
     char* pbuffer=buffer;
     number_type type={0};
     if(**source>=0&&**source<=57&&**source!=32){
@@ -1049,14 +1052,14 @@ void sscanf_write_e(va_list arg, const char** source, flagscanf* Flags){
             if(**source=='0'&&is_int_f(*(*source)+1)){
                 type.is_octal=1;(*source)++;
             }
-            for(int i=1;*(*source+i)!=32;i++){ //тут если вместо 32 поставить ' ' почему то выкидывает из цикла на одну итерацию позже
+            for(int i=1;*(*source+i)!=32&&*(*source+i)!='\0';i++){ //тут если вместо 32 поставить ' ' почему то выкидывает из цикла на одну итерацию позже
                 if(*(*source+i)=='e'||*(*source+i)=='E'){
                 type.is_scientific=1;printf("is scientific\n");
                 
                 }
             }
             if(!type.is_hex&&!type.is_octal&&!type.is_scientific)type.is_int=1;
-            while(**source!=32){
+            while(**source!=32&&**source!='\0'){
                 *pbuffer=**source;
                 (*source)++;
                 pbuffer++;
@@ -1067,6 +1070,7 @@ void sscanf_write_e(va_list arg, const char** source, flagscanf* Flags){
         int integer_from_string=atoi(buffer);
     if(type.is_scientific)
     *variable_address=scientific_to_float(buffer); 
+    if(type.is_int||type.is_octal)*variable_address=integer_from_string;
     if(Flags->failed==1){
         if((s21_strncmp(*source, "inf", 3)==0) ||
         (s21_strncmp(*source, "INF", 3)==0) ||
