@@ -842,9 +842,12 @@ void scanfparser_spec(const char *format, flagscanf* Flags){
 
  void scanf_concat_type(flagscanf* Flags, va_list arg, const char** source){
     void* add_this=malloc(10000);
-    if(Flags->base.integer==1){
+    if(Flags->base.integer==1||Flags->base.octal){
        add_this=(void*)scanf_write_int(Flags, arg, source);
     }
+    // if(Flags->base.octal==1){
+    //   scanf_write_octal(Flags, arg, source);
+    // }
     if(Flags->base.string==1){
         add_this=scanf_write_string(Flags, arg, source);
     }
@@ -862,8 +865,13 @@ void scanfparser_spec(const char *format, flagscanf* Flags){
    flags    parser(const char **format, flags Flags){
         //flags Flags={0};
         //(*format)++;
-        while(**format=='d'||**format=='s'||**format=='i'||**format=='e'){
+        while(**format=='d'||**format=='s'||**format=='i'||**format=='e'||**format=='o'||**format=='E'||**format=='g'||**format=='G'||**format=='f'){
            printf("here?:parser163");
+    //           case 'e':
+    // case 'E':
+    // case 'g':
+    // case 'G':
+    // case 'f':
         switch(**format){
             
         case 'd':
@@ -878,8 +886,14 @@ void scanfparser_spec(const char *format, flagscanf* Flags){
             Flags.decimal_octal_hex=1;
             break;   
         case 'e':
+        case 'E':
+        case 'g':
+        case 'G':
+        case 'f':
             Flags.e=1;
-            break;     
+            break; 
+        case 'o':
+            Flags.octal=1;        
         default:
             break;  }
             
@@ -925,6 +939,7 @@ int* scanf_write_int(flagscanf* Flags, va_list arg, const char** source ){
     }
 
     if(is_int)*i=i_i;
+    if(is_int&&Flags->base.octal)*i=dec_convert(i_i, 8);
     
     printf("INT WRITTEN TO MAIN VAR=%d\n", *i);
 
@@ -1181,5 +1196,21 @@ return_this=pre_plus_post*s21_pow(10, (float)atoi(exp));
 printf("\n\nEXPONENTED=%f\n\n", return_this);
 return return_this;
   }
+
+
+int* decimalToBinary(int decimalNumber) {
+    int binary[3200];  // Assuming a 32-bit integer
+
+    int i = 0;
+    while (decimalNumber > 0) {
+        binary[i] = decimalNumber % 2;
+        decimalNumber = decimalNumber / 2;
+        i++;
+    }
+    binary[i]='\0';
+
+   return binary;
+    
+}
 
   
