@@ -883,6 +883,7 @@ void scanfparser_spec(const char *format, flagscanf* Flags){
             Flags.move_format=2;
             break;  
         case 'i':
+        case 'o':
             Flags.decimal_octal_hex=1;
             break;   
         case 'e':
@@ -892,8 +893,8 @@ void scanfparser_spec(const char *format, flagscanf* Flags){
         case 'f':
             Flags.e=1;
             break; 
-        case 'o':
-            Flags.octal=1;        
+        // case 'o':
+        //     Flags.octal=1;        
         default:
             break;  }
             
