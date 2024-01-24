@@ -909,6 +909,7 @@ int* scanf_write_int(flagscanf* Flags, va_list arg, const char** source ){
     printf("VALUE OF INT I FROM MAIN=%d\n", *i);
     while(**source==' ')(*source)++;
     int i_i;
+    
     char buffer[1000];
     int count=0;
     char* pbuffer=buffer;
@@ -923,7 +924,6 @@ int* scanf_write_int(flagscanf* Flags, va_list arg, const char** source ){
                 (*source)++;
                count++;
             }
-            
         i_i=atoi(buffer); //buffer почему-то остается в памяти, поэтому заводим счетчик count и зануляем buffer после atoi
         while(count>0){
             buffer[count]='\0';
@@ -940,6 +940,7 @@ int* scanf_write_int(flagscanf* Flags, va_list arg, const char** source ){
 
     if(is_int)*i=i_i;
     if(is_int&&Flags->base.octal)*i=dec_convert(i_i, 8);
+    //if(flag.l==1) for flag long
     
     printf("INT WRITTEN TO MAIN VAR=%d\n", *i);
 
@@ -984,25 +985,33 @@ return variable;
 }
 
 int* scanf_write_decimal_octal_hex(va_list arg, const char** source, flagscanf* Flags){
+    Flags->failed=1;
     int* variable_adress=va_arg(arg, int*);
     int buffer_integer;
     while(**source==' ')(*source)++;
     char buffer[1000];
+    
+    
     char* pbuffer=buffer;
     int is_int=0;
     int is_hex=0;
     int is_octal=0;
+    int minus=0;
+    if(**source=='-'){
+        minus=1;(*source)++;
+    }
     if(**source==' '||(**source>=0&&**source<=57&&**source!=32)){
+        Flags->failed=0;
         while(**source!='\0'&&**source!=' '){
             if(**source>=0&&**source<=57&&is_int_f(**source)){
-                if(**source=='0'&&*(*source+1)=='x'){
+                if(**source=='0'&&*(*source+1)=='x'){ //priority of * highter than + but not highter than ++ seems like
                 is_hex=1;(*source)=(*source)+2;}
-                if(**source=='0'&&is_int_f(*(*source)+1)){
-                   // if(**source=='0'&&is_int_f(&((*source)+1))){ почему так нельзя хотел передавать функции указатель на указатель
+                if(**source=='0'&&is_int_f(*(*source)+1)&&!is_hex){
+                   // if(**source=='0'&&is_int_f(&((*source)+1))){ почему так нельзя хотел передавать функции указатель на указатель, переделал функцию чтобы брала чар
                 is_octal=1;(*source)++;
                 }
-             if(!is_hex)is_int=1;//пишем в variable только если флаг поднят, если я сделаю int is_int прямо сдесь это плохо, это значит будет переинициализация каждый цикл или норм и оно не будет нагружать программу и инициализирует только 1 раз?
-             while(**source!=' '){
+             if(!is_hex&&!is_octal)is_int=1;//пишем в variable только если флаг поднят, если я сделаю int is_int прямо сдесь это плохо, это значит будет переинициализация каждый цикл или норм и оно не будет нагружать программу и инициализирует только 1 раз?
+             while(**source!=' '&&**source!='\0'){
                 *pbuffer=**source;
                //cannot do that? (&buffer)++;
                //cannot do that? buffer++;
@@ -1019,14 +1028,21 @@ int* scanf_write_decimal_octal_hex(va_list arg, const char** source, flagscanf* 
 
     }
     buffer_integer=atoi(buffer);
+    printf("buffer_integer=%d", buffer_integer);
 
     if(is_hex){
-        *variable_adress=dec_convert(buffer_integer, 16);
+        // char* endptr;
+        
+        // long int result = strtol(buffer, &endptr, 16);
+        // *variable_adress=result;
+        *variable_adress=hex_to_dex(buffer, 16, Flags, minus);
     }
     if(is_octal){
-        *variable_adress=dec_convert(buffer_integer, 8);
+        *variable_adress=convert_to_dec(buffer_integer, 8, minus);
     }
-
+    if(is_int){
+        *variable_adress=minus ? -1.0*buffer_integer:1*buffer_integer;
+    }
     
 
 }
@@ -1197,20 +1213,55 @@ printf("\n\nEXPONENTED=%f\n\n", return_this);
 return return_this;
   }
 
+ long long int hex_to_dex(char str[], int base, flagscanf *param, int minus) {
+  long long int result = 0x0;
+  param->failed = 1;
+  char *start_str = str;
+  long long int sign = minus ? -1.0:1;
+  
+      base = 16;
+  
+  
 
-int* decimalToBinary(int decimalNumber) {
-    int binary[3200];  // Assuming a 32-bit integer
 
-    int i = 0;
-    while (decimalNumber > 0) {
-        binary[i] = decimalNumber % 2;
-        decimalNumber = decimalNumber / 2;
-        i++;
-    }
-    binary[i]='\0';
-
-   return binary;
     
+  
+
+  while (((*str >= 48 && *str <= 57) || (*str >= 65 && *str <= 70) ||
+          (*str >= 97 && *str <= 102)) ) {
+    if (*str >= 48 && *str <= 55) {
+      result = (*str - '0') + result * base;
+      str++;
+      
+    } else if ((*str >= 56 && *str <= 57) && (base != 8)) {
+      result = (*str - '0') + result * base;
+      str++;
+     
+    } else if ((*str >= 65 && *str <= 70) && (base != 8) && (base != 10)) {
+      result = (*str - 55) + result * base;
+      str++;
+      
+    } else if ((*str >= 97 && *str <= 102) && (base != 8) && (base != 10)) {
+      result = (*str - 87) + result * base;
+      str++;
+     
+    }
+    param->failed = 0;
+  }
+  if (param->failed == 1) *str = *start_str;
+  return result * sign;
+} 
+
+int convert_to_dec(int input, int base, int minus){
+    int power=0;
+    int dec=0;
+    
+    while(input>0){
+    dec=dec+(input%10)*pow(base, power);
+    input=input/10;
+    power++;}
+    return minus ? dec*-1.0:dec;
 }
+
 
   

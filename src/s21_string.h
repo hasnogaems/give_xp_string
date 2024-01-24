@@ -82,6 +82,9 @@ float scientific_to_float(char* string);
 long double char_to_dec(int* i, char str[]);
 long double exponent_f(char exp[], float pre_plus_post);
 void sscanf_write_e(va_list arg, const char** source, flagscanf*);
+long long int hex_to_dex(char str[], int base, flagscanf *param, int minus);
+int convert_to_dec(int input, int base, int minus);
+
 
 
 
