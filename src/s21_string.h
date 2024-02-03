@@ -25,7 +25,9 @@ typedef struct flags{
     int decimal_octal_hex;
     int move_format;
     int e;
+    int p;
     int octal;
+    int o;
 
 } flags;
 
@@ -33,7 +35,10 @@ typedef struct flagscanf{
     flags base;
     int fspace, fminus, fplus, fsharp, fzero;
     int failed;
-    char* regular;
+   // flags* name; если сделать так, то создастся ли структура name или только указатель на несуществующую структуру    
+   //char* regular;
+    int l, ll, h, L;
+    int width;
 } flagscanf;
 
 typedef struct {
@@ -73,18 +78,20 @@ flagscanf scanfparser_flags(const char** format);
 void scanfparser_spec(const char *format, flagscanf* Flags);
 void scanf_concat_type(flagscanf* Flags, va_list arg, const char** source);
 flags    parser(const char **format, flags Flags);
-int* scanf_write_int(flagscanf* Flags, va_list arg, const char** source );
+int* scanf_write_int(flagscanf* Flags, va_list arg, const char** source, long double* result);
 char* scanf_write_string(flagscanf* Flags, va_list arg, const char** source);
-int* scanf_write_decimal_octal_hex(va_list arg, const char** source, flagscanf*);
+int* scanf_write_decimal_octal_hex(va_list arg, const char** source, flagscanf*, long double* result);
 int is_int_f(char c);
 int dec_convert(int input, int base);
 float scientific_to_float(char* string);
 long double char_to_dec(int* i, char str[]);
 long double exponent_f(char exp[], float pre_plus_post);
-void sscanf_write_e(va_list arg, const char** source, flagscanf*);
-long long int hex_to_dex(char str[], int base, flagscanf *param, int minus);
+void sscanf_write_e(va_list arg, const char** source, flagscanf*, long double*);
+long long int hex_to_dex(char str[], int base, flagscanf *param, int minus, const char**);
 int convert_to_dec(int input, int base, int minus);
-
+void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags, long double* result);
+float a_to_float(char* string);
+ long int set_sign(char *str);
 
 
 
