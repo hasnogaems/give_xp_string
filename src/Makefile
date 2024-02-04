@@ -3,7 +3,7 @@ CFLAGS = -std=c11 -Wall -Wextra -Werror
 CCOVTEST= -fprofile-arcs -ftest-coverage
 LIBS = -lm
 in_progress:
-	gcc main.c s21_string.c -lm
+	gcc main.c s21_string.c s21_sscanf.c -lm
 
 all: s21_string.a
 

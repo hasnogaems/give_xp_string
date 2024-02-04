@@ -773,7 +773,10 @@ while(*format!='\0'&&*source!='\0'){
     }
     if(*format=='%'&&Flagscanf.failed==0){
         format++;
-        Flagscanf=scanfparser_flags(&format); // заполняем от ' ' до 0 почему не растет указатель я разименовываю 1 раз, значит должен расти формат
+        Flagscanf.width=0;
+        set_params(&Flagscanf, &format);
+        printf("test");
+        //Flagscanf=scanfparser_flags(&format); // заполняем от ' ' до 0 почему не растет указатель я разименовываю 1 раз, значит должен расти формат
         scanfparser_spec(format, &Flagscanf); // заполняем спецификаторы например d или s
         //Flagscanf=scanfparser(format);
         scanf_concat_type(&Flagscanf, args, &source); //возвращаем то, что мы пишем в переменную,
@@ -878,13 +881,17 @@ flagscanf scanfparser_flags(const char** format){
     if(Flags->base.o==1){
         sscanf_write_o(arg, source, Flags, result);
     }
-    if(!Flags->base.string&&!Flags->base.e){
+    if(!Flags->base.string&&!Flags->base.e&&!Flags->base.o){
      if(Flags->ll){ 
         *(va_arg(arg, long long int *)) = (long long int)*result;}
         else if(Flags->l){*(va_arg(arg, long int *)) = (long int)*result;}
         else if(Flags->h){*(va_arg(arg, short int *))= (short int)*result;}
         else{*(va_arg(arg, int*))=(int)*result;}}
-    // if(Flags->base.e)
+    //     else{
+    //       int* x=va_arg(arg, int*);
+    //       printf("test");}
+    //       }
+    // // if(Flags->base.e)
     // {*(va_arg(arg, float*))=(float)*result;}    
 
    
@@ -912,7 +919,6 @@ flagscanf scanfparser_flags(const char** format){
             Flags.move_format=2;
             break;  
         case 'i':
-        case 'o':
             Flags.decimal_octal_hex=1;
             break;   
         case 'e':
@@ -922,8 +928,8 @@ flagscanf scanfparser_flags(const char** format){
         case 'f':
             Flags.e=1;
             break; 
-        // case 'o':
-        //     Flags.octal=1;        
+        case 'o':
+            Flags.o=1;        
         default:
             break;  }
             
@@ -991,11 +997,11 @@ char* scanf_write_string(flagscanf* Flags, va_list arg, const char** source){
     char* variable=va_arg(arg, char*);
     char buffer[300]="11";
     int wcount=0;//счетчик сколько раз мы записали, чтобы отмотать
-    while(**source!=' '&&**source!='\0'&&Flags->width>0){ //пишем из source в буфер, а почему нельзя сразу писать в variable?
+    while(**source!=' '&&**source!='\0'&&(Flags->width>0||Flags->width==-1)){ //пишем из source в буфер, а почему нельзя сразу писать в variable?
         variable[wcount]=**source;
         wcount++;
         (*source)++;
-        Flags->width--;
+        if(Flags->width!=-1)Flags->width--;
 
 
     }
@@ -1036,7 +1042,7 @@ int* scanf_write_decimal_octal_hex(va_list arg, const char** source, flagscanf* 
     }
     if(**source==' '||(**source>=0&&**source<=57&&**source!=32)){
         Flags->failed=0;
-        while(**source!='\0'&&**source!=' '&&is_octal ? **source<'8':1){ //вообще ведь нельзя вставить if в while условие? только через ?
+        while(**source!='\0'&&**source!=' '&&(is_octal ? **source<'8':1)){ //вообще ведь нельзя вставить if в while условие? только через ?
             if(**source>=0&&**source<=57&&is_int_f(**source)){
                 if(**source=='0'&&*(*source+1)=='x'){ //priority of * highter than + but not highter than ++ seems like
                 is_hex=1;(*source)=(*source)+2;}
@@ -1045,7 +1051,7 @@ int* scanf_write_decimal_octal_hex(va_list arg, const char** source, flagscanf* 
                 is_octal=1;(*source)++;
                 }
              if(!is_hex&&!is_octal)is_int=1;//пишем в variable только если флаг поднят, если я сделаю int is_int прямо сдесь это плохо, это значит будет переинициализация каждый цикл или норм и оно не будет нагружать программу и инициализирует только 1 раз?
-             while(**source!=' '&&**source!='\0'&&is_octal ? **source<'8':1){
+             while(**source!=' '&&**source!='\0'&&(is_octal ? **source<'8':1)){ //если не поставить последнее условие в скобки то оно считает все до ? условием, и оно никогда не выполняется, следовательно всегда 1
                 *pbuffer=**source;
                //cannot do that? (&buffer)++;
                //cannot do that? buffer++;
@@ -1261,40 +1267,44 @@ return return_this;
 
  long long int hex_to_dex(char str[], int base, flagscanf *param, int minus, const char** source) {
   long long int result = 0x0;
-  param->failed = 1;
+ // param->failed = 1;
   char *start_str = str;
   long long int sign = minus ? -1.0:1;
   
-      base = 16;
+    //  base = 16;
   
   
 
 
     
   
-
+int break_=0;
   while (((*str >= 48 && *str <= 57) || (*str >= 65 && *str <= 70) ||
-          (*str >= 97 && *str <= 102)) ) {
+          (*str >= 97 && *str <= 102))&&break_==0 ) {
     if (*str >= 48 && *str <= 55) {
       result = (*str - '0') + result * base;
       str++;
+      (*source)++;
       
     } else if ((*str >= 56 && *str <= 57) && (base != 8)) {
       result = (*str - '0') + result * base;
       str++;
+      (*source)++;
      
     } else if ((*str >= 65 && *str <= 70) && (base != 8) && (base != 10)) {
       result = (*str - 55) + result * base;
       str++;
-      
+      (*source)++;
     } else if ((*str >= 97 && *str <= 102) && (base != 8) && (base != 10)) {
       result = (*str - 87) + result * base;
       str++;
-     
+      (*source)++;
     }
-    param->failed = 0;
+    else{break_=1;}
+    
+   // param->failed = 0;
   }
-  if (param->failed == 1) *str = *start_str;
+//   if (param->failed == 1) *str = *start_str;
   return result * sign;
 } 
 

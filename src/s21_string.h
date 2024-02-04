@@ -92,6 +92,8 @@ int convert_to_dec(int input, int base, int minus);
 void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags, long double* result);
 float a_to_float(char* string);
  long int set_sign(char *str);
+ void set_params(flagscanf *Flags, const char **format);
+ void width_function(const char **format, int *width);
 
 
 
