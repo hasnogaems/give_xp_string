@@ -94,6 +94,9 @@ float a_to_float(char* string);
  long int set_sign(char *str);
  void set_params(flagscanf *Flags, const char **format);
  void width_function(const char **format, int *width);
+ unsigned long long s21_pow(int base, int exp);
+ int width_check(flagscanf Flags);
+ int hex_check(const char** str);
 
 
 
