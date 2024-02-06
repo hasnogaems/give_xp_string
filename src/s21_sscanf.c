@@ -555,7 +555,8 @@ while(*format!='\0'&&*source!='\0'){
     }
     if(*format=='%'&&Flagscanf.failed==0){
         format++;
-        Flagscanf.width=0;
+       s21_memset(&Flagscanf, 0, sizeof(Flagscanf));//reset flags
+       // Flagscanf.width=0;
         set_params(&Flagscanf, &format);
         printf("test");
         //Flagscanf=scanfparser_flags(&format); // заполняем от ' ' до 0 почему не растет указатель я разименовываю 1 раз, значит должен расти формат
