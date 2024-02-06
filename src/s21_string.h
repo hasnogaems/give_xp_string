@@ -97,7 +97,7 @@ float a_to_float(char* string);
  unsigned long long s21_pow(int base, int exp);
  int width_check(flagscanf Flags);
  int hex_check(const char** str);
-
+int complex_while_check(const char** source);
 
 
 #define S21EPERM_STR "Operation not permitted"

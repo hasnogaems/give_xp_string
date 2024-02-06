@@ -116,7 +116,7 @@ int* scanf_write_int(flagscanf* Flags, va_list arg, const char** source, long do
     Flags->failed=1;
    // int* i=va_arg(arg, int*);// какое будет поведение у  va_arg  если тип аргумента не соответствует, например мы указываем int* а там лежит  char*
    // printf("VALUE OF INT I FROM MAIN=%d\n", *i);
-    while(**source==' '||**source=='0')(*source)++;
+    while(**source==' '||**source=='\0')(*source)++;
     int i_i;
     char buffer[1000];
     int count=0;
@@ -246,24 +246,25 @@ void sscanf_write_e(va_list arg, const char** source, flagscanf* Flags, long dou
     if(**source>=0&&**source<=57&&**source!=32){
         Flags->failed=0;
         // if(**source=='-')minus=1;
-        while(**source!='\0'&&**source!=' '){
+        if(**source!='\0'&&**source!=' '){
             if(**source=='0'&&*(*source+1)=='x'){
                 type.is_hex=1; (*source)=(*source)+2;}//skip 0x to number
             
             if(**source=='0'&&is_int_f(*(*source)+1)){
                 type.is_octal=1;(*source)++;
             }
-            for(int i=1;*(*source+i)!=32;i++){ //тут если вместо 32 поставить ' ' почему то выкидывает из цикла на одну итерацию позже
+            for(int i=1;*(*source+i)!=32&&*(*source+i)!='\0';i++){ //тут если вместо 32 поставить ' ' почему то выкидывает из цикла на одну итерацию позже
                 if(*(*source+i)=='e'||*(*source+i)=='E'){
                 type.is_scientific=1;printf("is scientific\n");
                 
                 }
             }
             if(!type.is_hex&&!type.is_octal&&!type.is_scientific)type.is_int=1;
-            while(**source!=32){
+            while(**source!=32&&**source!='\0'&&width_check(*Flags)&&complex_while_check(source)){
                 *pbuffer=**source;
                 (*source)++;
                 pbuffer++;
+                 if(Flags->width!=-1)Flags->width--;
             }
             *pbuffer='\0';
     }
@@ -301,6 +302,13 @@ void sscanf_write_e(va_list arg, const char** source, flagscanf* Flags, long dou
     
             
     }
+
+int complex_while_check(const char** source){
+  int is_true=0;
+  if(**source!=' '&&((is_int_f(**source)||((is_int_f(*(*source-1)))&&(**source=='e'||**source=='E')))))is_true=1;
+  
+  return is_true;
+}
 
 void set_params(flagscanf *Flags, const char **format) {
   width_function(format,  &(Flags->width));
@@ -351,7 +359,7 @@ int dec_convert(int input, int base){
     float post_dot_float;
     char exponent[1000000];
     int count=0;
-    while(*string!='.'){
+    while(*string!='.'&&*string!='e'&&*string!='E'){
         pre_dot[count]=*(string);
         string++;
         count++;
@@ -359,14 +367,14 @@ int dec_convert(int input, int base){
     }
     pre_dot[count]='\0';
     count=0;
-    string++;
+   if(*string=='.') string++;
     while(*string!='e'&&*string!='E'){
         post_dot[count]=*string;
         string++;count++;
     }
     post_dot[count]='\0';
     count=0;
-    while(*string!='+'&&*string!='-'){
+    while(*string!='+'&&*string!='-'&&*string!='e'&&*string!='E'){
         *(string++);
     }
 
