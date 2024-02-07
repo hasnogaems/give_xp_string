@@ -5,6 +5,9 @@ LIBS = -lm
 in_progress:
 	gcc main.c s21_string.c s21_sscanf.c -lm
 
+flags:
+	gcc $(CFLAGS) s21_string.c s21_sscanf.c -lm 
+
 all: s21_string.a
 
 s21_string.a: s21_string.o
