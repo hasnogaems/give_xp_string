@@ -35,7 +35,7 @@ return variable;
 
 }
 
- void scanf_write_decimal_octal_hex(const char** source, flagscanf* Flags, long double* result){
+ void scanf_write_decimal_octal_hex(const char** source, flagscanf* Flags, long long int* result, va_list arg){
     Flags->failed=1;
     //int* variable_adress=va_arg(arg, int*);
     int buffer_integer;
@@ -88,7 +88,7 @@ return variable;
     buffer_integer=atoi(buffer);
     printf("buffer_integer=%d", buffer_integer);
 //long long result;
-if(!Flags->failed){
+if(!Flags->failed&&Flags->asterisk != 1){
     if(is_hex){
         // char* endptr;
         
@@ -104,33 +104,59 @@ if(!Flags->failed){
        *result=minus ? -1.0*buffer_integer:1*buffer_integer;
     }
 }
-    //  if(Flags->ll){ *(va_arg(arg, long long int *)) = (long long int)result;}
-    //     else if(Flags->l){*(va_arg(arg, long int *)) = (long int)result;}
-    //     else if(Flags->h){*(va_arg(arg, short int *))= (short int)result;}
-    //     else{*(va_arg(arg, int*))=(int)result;}
+data_type_for_i(result, arg, Flags);
+
+ 
        
 
 }
 
-void scanf_write_int(flagscanf* Flags, const char** source, long double* result ){
+void data_type_for_i(long long int* result, va_list arg, flagscanf* Flags){
+    if (Flags->failed == 0) {
+      if ((Flags->l == 1) && (Flags->base.is_unsigned == 0)) {
+        *(va_arg(arg, long int *)) = (long int)*result;
+      } else if ((Flags->ll == 1) && (Flags->base.is_unsigned == 0) ) {
+        *(va_arg(arg, long long int *)) = (long long int)*result;
+      } else if ((Flags->h == 1) && (Flags->base.is_unsigned == 0)) {
+        *(va_arg(arg, short int *)) = (short int)*result;
+      } else if ((!Flags->l&&!Flags->ll) && (Flags->base.is_unsigned == 0)) {
+        *(va_arg(arg, int *)) = (int)*result;
+      } else if ((Flags->l == 1) && (Flags->base.is_unsigned == 1)) {
+        *(va_arg(arg, long unsigned int *)) = (long unsigned int)*result;
+      } else if ((Flags->ll == 1) && (Flags->base.is_unsigned == 1)) {
+        *(va_arg(arg, long long unsigned int *)) = (long long unsigned int)*result;
+      } else if ((Flags->h == 1) && (Flags->base.is_unsigned == 1)) {
+        *(va_arg(arg, short unsigned int *)) = (short unsigned int)*result;
+      } else if ((!Flags->l&&!Flags->ll) && (Flags->base.is_unsigned == 1) && Flags->base.is_ptr == 1) {
+        *(va_arg(arg, void **)) = (void*)*result;
+      } else if ((Flags->l == 0) && (Flags->base.is_unsigned == 1)) {
+        (*(va_arg(arg, unsigned int *))) = (unsigned int)*result;
+      }
+    }
+  }
+
+
+
+void scanf_write_int(flagscanf* Flags, const char** source, long long int* result, va_list arg){
     Flags->failed=1;
    // int* i=va_arg(arg, int*);// какое будет поведение у  va_arg  если тип аргумента не соответствует, например мы указываем int* а там лежит  char*
    // printf("VALUE OF INT I FROM MAIN=%d\n", *i);
-    while(**source==' '||**source=='\0')(*source)++;
+    while(**source==' ')(*source)++;
     int i_i;
     char buffer[1000];
     int count=0;
     char* pbuffer=buffer;
     int is_int=0;//вырастет только если была запись в int
-    if(**source=='\0'||**source==' '||(**source>=0&&**source<=57&&**source!=32)){ //это нужно чтобы не двигало курсор если мы пытаемся прочитать строку как d
+    if(**source!='\0'&&(**source>=0&&**source<=57&&**source!=32)){ //это нужно чтобы не двигало курсор если мы пытаемся прочитать строку как d
     while(**source!='\0'&&**source!=' '){
         if(**source>=0&&**source<=57&&**source!=32){
             is_int=1; Flags->failed=0;
-            while(**source!=' '&&**source!='\0'&&Flags->width>0){
+            while(**source!=' '&&**source!='\0'&&width_check(*Flags)){
                 *pbuffer=**source;
                 pbuffer++;
                 (*source)++;
                count++;
+               if(Flags->width!=-1)
                Flags->width--;
             }
             //if(Flags->width>0)buffer[Flags->width]='\0';
@@ -149,7 +175,9 @@ void scanf_write_int(flagscanf* Flags, const char** source, long double* result 
     }
     }
 
-    if(is_int)*result=i_i;
+    if(is_int){
+      
+    *result=i_i;}
     
     //printf("INT WRITTEN TO MAIN VAR=%d\n", *i);
 
@@ -547,6 +575,7 @@ float a_to_float(char* string){
 
 int s21_sscanf(const char* source, const char *format, ...){
 va_list args;
+int count=0;
 
 
 
@@ -557,6 +586,7 @@ va_start(args, format);
 // printf("INT X IN MAIN=%d\n", *x);
 
 flagscanf Flagscanf={0};
+if(*format=='\0'||*source=='\0')count=-1;
 while(*format!='\0'&&*source!='\0'){
     //printf("here?\n");
     while(*format==*source&&*format!='%'){
@@ -564,6 +594,7 @@ while(*format!='\0'&&*source!='\0'){
     }
     if(*format=='%'&&Flagscanf.failed==0){
         format++;
+       
        s21_memset(&Flagscanf, 0, sizeof(Flagscanf));//reset flags
        // Flagscanf.width=0;
         set_params(&Flagscanf, &format);
@@ -581,11 +612,15 @@ while(*format!='\0'&&*source!='\0'){
         
     }
     format++;
+    if(!Flagscanf.failed)count++;
 
 
 }
+
+
 //printf("Flagscanf:\nbase.integer=%d\nbase.string=%d\nfplus=%d\n", Flagscanf.base.integer, Flagscanf.base.string, Flagscanf.fplus);
 //printf("Flagscanf:\nbase->integer=%d\n", Flagscanf.base.integer);
+return count;
 }
 
 
@@ -617,6 +652,10 @@ while(*format!='\0'&&*source!='\0'){
             Flags->L=1;
             format++;
             break;
+            case '*':
+            Flags->asterisk=1;
+            format++;
+            break;
             default:
                 Flags->base = parser(&format, Flags->base); 
         }
@@ -630,15 +669,15 @@ while(*format!='\0'&&*source!='\0'){
    void scanf_concat_type(flagscanf* Flags, va_list arg, const char** source){
    
     
-    long double* result=(long double*)calloc(1, sizeof(long double));
+    long long int* result=(long long int*)calloc(1, sizeof(long double));
     if(Flags->base.integer==1){
-       scanf_write_int(Flags,source, result);
+       scanf_write_int(Flags,source, result, arg);
     }
     if(Flags->base.string==1){
         scanf_write_string(Flags, arg, source);
     }
     if(Flags->base.decimal_octal_hex==1||Flags->base.p){
-        scanf_write_decimal_octal_hex(source, Flags, result);
+        scanf_write_decimal_octal_hex(source, Flags, result, arg);
         // printf("ADDTHIS=%d\n", *((int*)add_this)); interesting segfault 
     }
     if(Flags->base.e==1){
@@ -647,12 +686,15 @@ while(*format!='\0'&&*source!='\0'){
     if(Flags->base.o==1){
         sscanf_write_o(arg, source, Flags);
     }
-    if(!Flags->base.string&&!Flags->base.e&&!Flags->base.o&&!Flags->failed){
-     if(Flags->ll){ 
-        *(va_arg(arg, long long int *)) = (long long int)*result;}
-        else if(Flags->l){*(va_arg(arg, long int *)) = (long int)*result;}
-        else if(Flags->h){*(va_arg(arg, short int *))= (short int)*result;}
-        else{*(va_arg(arg, int*))=(int)*result;}}
+    // if(!Flags->base.string&&!Flags->base.e&&!Flags->base.o&&!Flags->failed){
+    //  if(Flags->ll){ 
+    //     *(va_arg(arg, long long int *)) = (long long int)*result;}
+    //     else if(Flags->l){
+    //       *(va_arg(arg, long int *)) = (long int)*result;}
+    //     else if(Flags->h){
+    //       *(va_arg(arg, short int *))= (short int)*result;}
+    //     else{
+    //       *(va_arg(arg, int*))=(int)*result;}}
     //     else{
     //       int* x=va_arg(arg, int*);
     //       printf("test");}
@@ -667,7 +709,7 @@ while(*format!='\0'&&*source!='\0'){
    flags    parser(const char **format, flags Flags){
         //flags Flags={0};
         //(*format)++;
-        while(**format=='d'||**format=='s'||**format=='i'||**format=='e'||**format=='o'||**format=='E'||**format=='g'||**format=='G'||**format=='f'){
+        while(**format=='d'||**format=='s'||**format=='i'||**format=='e'||**format=='o'||**format=='E'||**format=='g'||**format=='G'||**format=='f'||**format=='p'){
         //   printf("here?:parser163");
     //           case 'e':
     // case 'E':
@@ -680,6 +722,10 @@ while(*format!='\0'&&*source!='\0'){
             Flags.integer=1;
             Flags.move_format=2;
             break;
+        case 'u':
+            Flags.integer=1;  
+            Flags.is_unsigned=1; 
+            break;     
         case 's':
             Flags.string=1;
             Flags.move_format=2;
@@ -687,6 +733,12 @@ while(*format!='\0'&&*source!='\0'){
         case 'i':
             Flags.decimal_octal_hex=1;
             break;   
+         case 'p':
+            Flags.decimal_octal_hex=1;
+            Flags.is_unsigned=1;  
+            Flags.is_ptr=1;
+            break;    
+              
         case 'e':
         case 'E':
         case 'g':

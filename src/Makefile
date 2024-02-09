@@ -6,7 +6,10 @@ in_progress:
 	gcc main.c s21_string.c s21_sscanf.c -lm
 
 flags:
-	gcc $(CFLAGS) s21_string.c s21_sscanf.c -lm 
+	gcc $(CFLAGS) main.c s21_string.c s21_sscanf.c -lm 
+
+c11:
+	gcc -std=c11 main.c s21_string.c s21_sscanf.c -lm 	
 
 all: s21_string.a
 

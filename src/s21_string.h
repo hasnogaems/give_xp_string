@@ -28,6 +28,8 @@ typedef struct flags{
     int p;
     int octal;
     int o;
+    int is_unsigned;
+    int is_ptr;
 
 } flags;
 
@@ -39,6 +41,7 @@ typedef struct flagscanf{
    //char* regular;
     int l, ll, h, L;
     int width;
+    int asterisk;
 } flagscanf;
 
 typedef struct {
@@ -78,9 +81,10 @@ flagscanf scanfparser_flags(const char** format);
 void scanfparser_spec(const char *format, flagscanf* Flags);
 void scanf_concat_type(flagscanf* Flags, va_list arg, const char** source);
 flags    parser(const char **format, flags Flags);
-void scanf_write_int(flagscanf* Flags, const char** source, long double* result);
+void scanf_write_int(flagscanf* Flags, const char** source, long long int* result, va_list arg);
 char* scanf_write_string(flagscanf* Flags, va_list arg, const char** source);
-void scanf_write_decimal_octal_hex(const char** source, flagscanf*, long double* result);
+void scanf_write_decimal_octal_hex(const char** source, flagscanf*, long long int* result, va_list arg);
+void data_type_for_i(long long int* result, va_list , flagscanf* Flags);
 int is_int_f(char c);
 int dec_convert(int input, int base);
 float scientific_to_float(char* string);
