@@ -5,6 +5,9 @@ LIBS = -lm
 in_progress:
 	gcc main.c s21_string.c s21_sscanf.c -lm
 
+my_tests:
+	gcc s21_string.c s21_sscanf.c s21_string_tests.c -lm -lcheck -lpthread
+
 flags:
 	gcc $(CFLAGS) main.c s21_string.c s21_sscanf.c -lm 
 

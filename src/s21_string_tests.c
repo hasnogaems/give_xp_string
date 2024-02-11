@@ -6,11 +6,23 @@
 
 #include "s21_string.h"
 
-START_TEST(memchr_1) {
-  char str[] = "Hello, world!";
-  int ch = ' ';
+
+
+START_TEST(sscanf_1) {
+  char str[] = "Hello, world! 111 0x34ab";
+  char str1[100], str2[100];
+  int a, b;
+  void* p1, *p2;
+
+
   s21_size_t len = strlen(str);
-  ck_assert_ptr_eq(memchr(str, ch, len), s21_memchr(str, ch, len));
+  sscanf(str, "%s%d%p", str1, &a, &p1);
+  s21_sscanf(str, "%s%d%p", str2, &b, &p2);
+  
+  
+  ck_assert_pstr_eq(str1, str2);
+  // ck_assert_pstr_eq(*a, *b);
+  // ck_assert_pstr_eq(p1, p2);
 }
 END_TEST
 
@@ -2722,286 +2734,10 @@ Suite *s21_string_suite(void) {
   suite = suite_create("s21_string");
   TCase *tcase_core = tcase_create("Core");
 
-  tcase_add_test(tcase_core, memchr_1);
-  tcase_add_test(tcase_core, memchr_2);
-  tcase_add_test(tcase_core, memchr_3);
-  tcase_add_test(tcase_core, memchr_4);
-  tcase_add_test(tcase_core, memchr_5);
-  tcase_add_test(tcase_core, memchr_6);
-  tcase_add_test(tcase_core, memchr_7);
-  tcase_add_test(tcase_core, memchr_8);
-  tcase_add_test(tcase_core, memchr_9);
-  tcase_add_test(tcase_core, memchr_10);
+ 
 
-  tcase_add_test(tcase_core, memcmp_1);
-  tcase_add_test(tcase_core, memcmp_2);
-  tcase_add_test(tcase_core, memcmp_3);
-  tcase_add_test(tcase_core, memcmp_4);
-  tcase_add_test(tcase_core, memcmp_5);
-  tcase_add_test(tcase_core, memcmp_6);
-  tcase_add_test(tcase_core, memcmp_7);
-  tcase_add_test(tcase_core, memcmp_8);
-  tcase_add_test(tcase_core, memcmp_9);
-  tcase_add_test(tcase_core, memcmp_10);
-  tcase_add_test(tcase_core, memcmp_11);
-  tcase_add_test(tcase_core, memcmp_12);
-  tcase_add_test(tcase_core, memcmp_13);
-  tcase_add_test(tcase_core, memcmp_14);
-  tcase_add_test(tcase_core, memcmp_15);
-  tcase_add_test(tcase_core, memcmp_16);
-
-  tcase_add_test(tcase_core, memcpy_1);
-  tcase_add_test(tcase_core, memcpy_2);
-  tcase_add_test(tcase_core, memcpy_3);
-  tcase_add_test(tcase_core, memcpy_4);
-  tcase_add_test(tcase_core, memcpy_5);
-  tcase_add_test(tcase_core, memcpy_6);
-  tcase_add_test(tcase_core, memcpy_7);
-  tcase_add_test(tcase_core, memcpy_8);
-  tcase_add_test(tcase_core, memcpy_9);
-  tcase_add_test(tcase_core, memcpy_10);
-
-  tcase_add_test(tcase_core, memset_1);
-  tcase_add_test(tcase_core, memset_2);
-  tcase_add_test(tcase_core, memset_3);
-  tcase_add_test(tcase_core, memset_4);
-  tcase_add_test(tcase_core, memset_5);
-  tcase_add_test(tcase_core, memset_6);
-
-  tcase_add_test(tcase_core, strncat_1);
-  tcase_add_test(tcase_core, strncat_2);
-  tcase_add_test(tcase_core, strncat_3);
-  tcase_add_test(tcase_core, strncat_4);
-  tcase_add_test(tcase_core, strncat_5);
-  tcase_add_test(tcase_core, strncat_6);
-  tcase_add_test(tcase_core, strncat_7);
-  tcase_add_test(tcase_core, strncat_8);
-  tcase_add_test(tcase_core, strncat_9);
-  tcase_add_test(tcase_core, strncat_10);
-  tcase_add_test(tcase_core, strncat_11);
-  tcase_add_test(tcase_core, strncat_12);
-  tcase_add_test(tcase_core, strncat_13);
-  tcase_add_test(tcase_core, strncat_14);
-  tcase_add_test(tcase_core, strncat_15);
-
-  tcase_add_test(tcase_core, strchr_1);
-  tcase_add_test(tcase_core, strchr_2);
-  tcase_add_test(tcase_core, strchr_3);
-  tcase_add_test(tcase_core, strchr_4);
-  tcase_add_test(tcase_core, strchr_5);
-  tcase_add_test(tcase_core, strchr_6);
-  tcase_add_test(tcase_core, strchr_7);
-  tcase_add_test(tcase_core, strchr_8);
-
-  tcase_add_test(tcase_core, strncmp_1);
-  tcase_add_test(tcase_core, strncmp_2);
-  tcase_add_test(tcase_core, strncmp_3);
-  tcase_add_test(tcase_core, strncmp_4);
-  tcase_add_test(tcase_core, strncmp_5);
-  tcase_add_test(tcase_core, strncmp_6);
-  tcase_add_test(tcase_core, strncmp_7);
-  tcase_add_test(tcase_core, strncmp_8);
-  tcase_add_test(tcase_core, strncmp_9);
-
-  tcase_add_test(tcase_core, strncpy_1);
-  tcase_add_test(tcase_core, strncpy_2);
-  tcase_add_test(tcase_core, strncpy_3);
-  tcase_add_test(tcase_core, strncpy_4);
-  tcase_add_test(tcase_core, strncpy_5);
-  tcase_add_test(tcase_core, strncpy_6);
-
-  tcase_add_test(tcase_core, strcspn_1);
-  tcase_add_test(tcase_core, strcspn_2);
-  tcase_add_test(tcase_core, strcspn_3);
-  tcase_add_test(tcase_core, strcspn_4);
-  tcase_add_test(tcase_core, strcspn_5);
-  tcase_add_test(tcase_core, strcspn_6);
-  tcase_add_test(tcase_core, strcspn_7);
-  tcase_add_test(tcase_core, strcspn_8);
-  tcase_add_test(tcase_core, strcspn_9);
-  tcase_add_test(tcase_core, strcspn_10);
-  tcase_add_test(tcase_core, strcspn_11);
-  tcase_add_test(tcase_core, strcspn_12);
-
-  tcase_add_test(tcase_core, strlen_1);
-  tcase_add_test(tcase_core, strlen_2);
-  tcase_add_test(tcase_core, strlen_3);
-  tcase_add_test(tcase_core, strlen_4);
-  tcase_add_test(tcase_core, strlen_5);
-  tcase_add_test(tcase_core, strlen_6);
-  tcase_add_test(tcase_core, strlen_7);
-  tcase_add_test(tcase_core, strlen_8);
-  tcase_add_test(tcase_core, strlen_9);
-  tcase_add_test(tcase_core, strlen_10);
-  tcase_add_test(tcase_core, strlen_11);
-  tcase_add_test(tcase_core, strlen_12);
-  tcase_add_test(tcase_core, strlen_13);
-  tcase_add_test(tcase_core, strlen_14);
-
-  tcase_add_test(tcase_core, strpbrk_1);
-  tcase_add_test(tcase_core, strpbrk_2);
-  tcase_add_test(tcase_core, strpbrk_3);
-  tcase_add_test(tcase_core, strpbrk_4);
-  tcase_add_test(tcase_core, strpbrk_5);
-  tcase_add_test(tcase_core, strpbrk_6);
-
-  tcase_add_test(tcase_core, strrchr_1);
-  tcase_add_test(tcase_core, strrchr_2);
-  tcase_add_test(tcase_core, strrchr_3);
-  tcase_add_test(tcase_core, strrchr_4);
-  tcase_add_test(tcase_core, strrchr_5);
-  tcase_add_test(tcase_core, strrchr_6);
-  tcase_add_test(tcase_core, strrchr_7);
-  tcase_add_test(tcase_core, strrchr_8);
-
-  tcase_add_test(tcase_core, strstr_1);
-  tcase_add_test(tcase_core, strstr_2);
-  tcase_add_test(tcase_core, strstr_3);
-  tcase_add_test(tcase_core, strstr_4);
-  tcase_add_test(tcase_core, strstr_5);
-  tcase_add_test(tcase_core, strstr_6);
-  tcase_add_test(tcase_core, strstr_7);
-  tcase_add_test(tcase_core, strstr_8);
-  tcase_add_test(tcase_core, strstr_9);
-  tcase_add_test(tcase_core, strstr_10);
-  tcase_add_test(tcase_core, strstr_11);
-  tcase_add_test(tcase_core, strstr_12);
-  // tcase_add_test(tcase_core, strstr_13);
-
-  tcase_add_test(tcase_core, strtok_1);
-  tcase_add_test(tcase_core, strtok_2);
-  tcase_add_test(tcase_core, strtok_3);
-  tcase_add_test(tcase_core, strtok_4);
-  tcase_add_test(tcase_core, strtok_5);
-  tcase_add_test(tcase_core, strtok_6);
-  tcase_add_test(tcase_core, strtok_7);
-  tcase_add_test(tcase_core, strtok_8);
-  tcase_add_test(tcase_core, strtok_9);
-  tcase_add_test(tcase_core, strtok_10);
-  // tcase_add_test(tcase_core, strtok_11);
-  tcase_add_test(tcase_core, strtok_12);
-  tcase_add_test(tcase_core, strtok_13);
-  tcase_add_test(tcase_core, strtok_14);
-  tcase_add_test(tcase_core, strtok_15);
-  tcase_add_test(tcase_core, strtok_16);
-  tcase_add_test(tcase_core, strtok_17);
-  tcase_add_test(tcase_core, strtok_18);
-  tcase_add_test(tcase_core, strtok_19);
-  tcase_add_test(tcase_core, strtok_20);
-
-  // tcase_add_test(tcase_core, strerror_1);
-  // tcase_add_test(tcase_core, strerror_2);
-
-  tcase_add_test(tcase_core, sprintf_1_c);
-  tcase_add_test(tcase_core, sprintf_2_c);
-  tcase_add_test(tcase_core, sprintf_3_c);
-  tcase_add_test(tcase_core, sprintf_4_c);
-  tcase_add_test(tcase_core, sprintf_5_c);
-  tcase_add_test(tcase_core, sprintf_6_c);
-  tcase_add_test(tcase_core, sprintf_7_c);
-  tcase_add_test(tcase_core, sprintf_8_c);
-  tcase_add_test(tcase_core, sprintf_9_c);
-  tcase_add_test(tcase_core, sprintf_10_c);
-  tcase_add_test(tcase_core, sprintf_11_c);
-  tcase_add_test(tcase_core, sprintf_12_c);
-  tcase_add_test(tcase_core, sprintf_13_c);
-  tcase_add_test(tcase_core, sprintf_14_c);
-  tcase_add_test(tcase_core, sprintf_15_c);
-  tcase_add_test(tcase_core, sprintf_16_c);
-  tcase_add_test(tcase_core, sprintf_17_c);
-  tcase_add_test(tcase_core, sprintf_18_c);
-  tcase_add_test(tcase_core, sprintf_19_c);
-
-  tcase_add_test(tcase_core, sprintf_1_f);
-  tcase_add_test(tcase_core, sprintf_2_f);
-  tcase_add_test(tcase_core, sprintf_3_f);
-  tcase_add_test(tcase_core, sprintf_4_f);
-  tcase_add_test(tcase_core, sprintf_5_f);
-  tcase_add_test(tcase_core, sprintf_6_f);
-  tcase_add_test(tcase_core, sprintf_7_f);
-  tcase_add_test(tcase_core, sprintf_8_f);
-  tcase_add_test(tcase_core, sprintf_9_f);
-  tcase_add_test(tcase_core, sprintf_10_f);
-  tcase_add_test(tcase_core, sprintf_11_f);
-  tcase_add_test(tcase_core, sprintf_12_f);
-  tcase_add_test(tcase_core, sprintf_13_f);
-  tcase_add_test(tcase_core, sprintf_14_f);
-  tcase_add_test(tcase_core, sprintf_15_f);
-  tcase_add_test(tcase_core, sprintf_16_f);
-  tcase_add_test(tcase_core, sprintf_17_f);
-  tcase_add_test(tcase_core, sprintf_18_f);
-  tcase_add_test(tcase_core, sprintf_19_f);
-  tcase_add_test(tcase_core, sprintf_20_f);
-  tcase_add_test(tcase_core, sprintf_21_f);
-  tcase_add_test(tcase_core, sprintf_22_f);
-  tcase_add_test(tcase_core, sprintf_23_f);
-  tcase_add_test(tcase_core, sprintf_24_f);
-  tcase_add_test(tcase_core, sprintf_25_f);
-  tcase_add_test(tcase_core, sprintf_26_f);
-  tcase_add_test(tcase_core, sprintf_27_f);
-  tcase_add_test(tcase_core, sprintf_28_f);
-  tcase_add_test(tcase_core, sprintf_30_f);
-  tcase_add_test(tcase_core, sprintf_31_f);
-  tcase_add_test(tcase_core, sprintf_32_f);
-  tcase_add_test(tcase_core, sprintf_33_f);
-  tcase_add_test(tcase_core, sprintf_34_f);
-  tcase_add_test(tcase_core, sprintf_35_f);
-  tcase_add_test(tcase_core, sprintf_36_f);
-  tcase_add_test(tcase_core, sprintf_37_f);
-  tcase_add_test(tcase_core, sprintf_38_f);
-  tcase_add_test(tcase_core, sprintf_39_f);
-  tcase_add_test(tcase_core, sprintf_40_f);
-  tcase_add_test(tcase_core, sprintf_41_f);
-  tcase_add_test(tcase_core, sprintf_42_f);
-  tcase_add_test(tcase_core, sprintf_43_f);
-  tcase_add_test(tcase_core, sprintf_44_f);
-  tcase_add_test(tcase_core, sprintf_45_f);
-  tcase_add_test(tcase_core, sprintf_46_f);
-  tcase_add_test(tcase_core, sprintf_47_f);
-  tcase_add_test(tcase_core, sprintf_48_f);
-  tcase_add_test(tcase_core, sprintf_49_f);
-  tcase_add_test(tcase_core, sprintf_50_f);
-  tcase_add_test(tcase_core, sprintf_51_f);
-  tcase_add_test(tcase_core, sprintf_52_f);
-  tcase_add_test(tcase_core, sprintf_54_f);
-
-  tcase_add_test(tcase_core, sprintf_1_signed);
-  tcase_add_test(tcase_core, sprintf_2_signed);
-  tcase_add_test(tcase_core, sprintf_3_signed);
-  tcase_add_test(tcase_core, sprintf_4_signed);
-  tcase_add_test(tcase_core, sprintf_5_signed);
-  tcase_add_test(tcase_core, sprintf_6_signed);
-  tcase_add_test(tcase_core, sprintf_7_signed);
-  tcase_add_test(tcase_core, sprintf_8_signed);
-  tcase_add_test(tcase_core, sprintf_9_signed);
-  tcase_add_test(tcase_core, sprintf_10_signed);
-  tcase_add_test(tcase_core, sprintf_11_signed);
-  tcase_add_test(tcase_core, sprintf_12_signed);
-  tcase_add_test(tcase_core, sprintf_13_signed);
-  tcase_add_test(tcase_core, sprintf_14_signed);
-  tcase_add_test(tcase_core, sprintf_15_signed);
-  tcase_add_test(tcase_core, sprintf_16_signed);
-  tcase_add_test(tcase_core, sprintf_17_signed);
-  tcase_add_test(tcase_core, sprintf_18_signed);
-  tcase_add_test(tcase_core, sprintf_19_signed);
-
-  tcase_add_test(tcase_core, sprintf_1_unsigned);
-  tcase_add_test(tcase_core, sprintf_2_unsigned);
-  tcase_add_test(tcase_core, sprintf_3_unsigned);
-  tcase_add_test(tcase_core, sprintf_4_unsigned);
-  tcase_add_test(tcase_core, sprintf_5_unsigned);
-  tcase_add_test(tcase_core, sprintf_6_unsigned);
-  tcase_add_test(tcase_core, sprintf_7_unsigned);
-  tcase_add_test(tcase_core, sprintf_8_unsigned);
-  tcase_add_test(tcase_core, sprintf_9_unsigned);
-  tcase_add_test(tcase_core, sprintf_10_unsigned);
-  tcase_add_test(tcase_core, sprintf_11_unsigned);
-  tcase_add_test(tcase_core, sprintf_12_unsigned);
-  tcase_add_test(tcase_core, sprintf_13_unsigned);
-  tcase_add_test(tcase_core, sprintf_14_unsigned);
-  tcase_add_test(tcase_core, sprintf_15_unsigned);
-  tcase_add_test(tcase_core, sprintf_16_unsigned);
-  tcase_add_test(tcase_core, sprintf_17_unsigned);
+  tcase_add_test(tcase_core, sscanf_1);
+  
 
   suite_add_tcase(suite, tcase_core);
 

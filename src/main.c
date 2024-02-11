@@ -2,7 +2,7 @@
 //#include <string.h>
 #include "s21_string.h"
 int main(){
-    char str[80]="HEEHEEHEE";
+    char strrr[80]="HEEHEEHEE";
     char str21[]="HEY";//ставим сюда значение массива оно отрабатывает нормально, указываем просто размер и оно пишет не то, с размером работает 6 работает 7 не работает а на убунте работает не взирая на это
     
     float y=44,z, i=5;
@@ -32,11 +32,20 @@ int main(){
 //     // printf("s21 : %s %d\n", str21, y);
 //     printf("orig count=%d\n s21 count=%d\n", ii, bb);
 void* pointer21, *pointer;
-     ii=sscanf("0x11ab", "%p", &pointer);
+     ii=sscanf("0x11ab", "%Le", &pointer);
    // s21sscanf("777  test  1111 2 3 4 5", "%s%d%d", str21, &y, &z);
     bb=s21_sscanf("0x11ab", "%p", &pointer21);
      printf("\nmain printf string:%p\n", pointer21);
     printf("orig:%p\n", pointer);\
+     char str[] = "Hello, world! 111 0x34ab";
+  char str1[100], str2[100];
+  int a, b;
+  void* p1, *p2;
+
+
+ 
+  sscanf(str, "%s%d%p", str1, &a, &p1);
+  s21_sscanf(str, "%s%d%p", str2, &b, &p2);
     return 0;
 }
 //sscanf  проверяется на   %s %d и %e
