@@ -1,4 +1,8 @@
 #include <stdio.h>
+#include <check.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
 //#include <string.h>
 #include "s21_string.h"
 int main(){
@@ -21,31 +25,42 @@ int main(){
 //     printf("\nmain printf string:%f %s %d\n", y, str21, zz1);
 //     printf("orig:%f %s %d\n", i, str, zz);
    // int inty=13, iinty=14;
-//     ii=sscanf("6666666", "%ld", &zz1);
+     ii=sscanf("6666 666", "%*u %d", &zz1);
 //    // s21sscanf("777  test  1111 2 3 4 5", "%s%d%d", str21, &y, &z);
-//     bb=s21_sscanf("666666666", "%ld", &zz);
-//     printf("\nmain printf string:%d\n", zz);
+     bb=s21_sscanf("66666 6666", "%*u %d", &zz);
+     printf("\nmain printf string:%d\n", zz);
 
 //       void* pointer21, *pointer;
    
-//     printf("orig:%d\n", zz1);\
+     printf("orig:%d\n", zz1);\
 //     // printf("s21 : %s %d\n", str21, y);
 //     printf("orig count=%d\n s21 count=%d\n", ii, bb);
-void* pointer21, *pointer;
-     ii=sscanf("0x11ab", "%Le", &pointer);
-   // s21sscanf("777  test  1111 2 3 4 5", "%s%d%d", str21, &y, &z);
-    bb=s21_sscanf("0x11ab", "%p", &pointer21);
-     printf("\nmain printf string:%p\n", pointer21);
-    printf("orig:%p\n", pointer);\
-     char str[] = "Hello, world! 111 0x34ab";
-  char str1[100], str2[100];
-  int a, b;
-  void* p1, *p2;
+// void* pointer21, *pointer;
+//      ii=sscanf("0x11ab", "%p", &pointer);
+//    // s21sscanf("777  test  1111 2 3 4 5", "%s%d%d", str21, &y, &z);
+//     bb=s21_sscanf("0x11ab", "%p", &pointer21);
+//      printf("\nmain printf string:%p\n", pointer21);
+//     printf("orig:%p\n", pointer);\
+//      char str[] = "Hello, world! 111 0x34ab";
+//   char str1[100], str2[100];
+//   int a, b;
+//   void* p1, *p2;
 
 
  
-  sscanf(str, "%s%d%p", str1, &a, &p1);
-  s21_sscanf(str, "%s%d%p", str2, &b, &p2);
+//   sscanf(str, "%s%d%p", str1, &a, &p1);
+//   s21_sscanf(str, "%s%d%p", str2, &b, &p2);
+
+    char fstr[] = "%c %c %c %c";
+  char str[] = "   a     b c d";
+  int16_t a1 = 0, a2 = 5, b1 = 0, b2 = 5, c1 = 0, c2 = 5, d1 = 0, d2 = 5;
+
+  int16_t res1 = s21_sscanf(str, fstr, &a1, &b1, &c1, &d1);
+
+  int16_t res2 = sscanf(str, fstr, &a2, &b2, &c2, &d2);
+
+ printf("s21=%d orig=%d", res1, res2);
+  
     return 0;
 }
 //sscanf  проверяется на   %s %d и %e

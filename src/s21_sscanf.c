@@ -162,7 +162,7 @@ void scanf_write_int(flagscanf* Flags, const char** source, long long int* resul
             //if(Flags->width>0)buffer[Flags->width]='\0';
             
         i_i=atoi(buffer); //buffer почему-то остается в памяти, поэтому заводим счетчик count и зануляем buffer после atoi
-        while(count>0){
+        while(count>-1){
             buffer[count]='\0';
             count--;
         }
@@ -178,6 +178,38 @@ void scanf_write_int(flagscanf* Flags, const char** source, long long int* resul
     if(is_int){
       
     *result=i_i;}
+    if (Flags->asterisk != 1) {
+      
+    if (Flags->failed == 0) {
+      if (Flags->base.is_unsigned==1){
+        if (Flags->l == 1) {
+        *(va_arg(arg, long unsigned int *)) = (long unsigned int)*result;
+      } else if (Flags->ll == 1) {
+        *(va_arg(arg, long long unsigned int *)) = (long long unsigned int)(*result);
+      } else if (Flags->h == 1) {
+        *(va_arg(arg, short unsigned int*)) = (short unsigned int)(*result);
+      }
+        else  
+        {
+        *(va_arg(arg, unsigned int *)) = (unsigned int)(*result);
+      }
+      }
+      else{
+      if (Flags->l == 1) {
+        *(va_arg(arg, long int *)) = (long int)*result;
+      } else if (Flags->ll == 1) {
+        *(va_arg(arg, long long int *)) = (long long int)(*result);
+      } else if (Flags->h == 1) {
+        *(va_arg(arg, short int*)) = (short int)(*result);
+      }
+        else  
+        {
+        *(va_arg(arg, int *)) = (int)(*result);
+      }
+      }
+    }
+  }
+
     
     //printf("INT WRITTEN TO MAIN VAR=%d\n", *i);
 
@@ -613,6 +645,9 @@ while(*format!='\0'&&*source!='\0'){
     }
     format++;
     if(!Flagscanf.failed)count++;
+    else{
+      count=-1;
+    }
 
 
 }
@@ -686,6 +721,9 @@ return count;
     if(Flags->base.o==1){
         sscanf_write_o(arg, source, Flags);
     }
+    if(Flags->base.c){
+      sscanf_write_c()
+    }
     // if(!Flags->base.string&&!Flags->base.e&&!Flags->base.o&&!Flags->failed){
     //  if(Flags->ll){ 
     //     *(va_arg(arg, long long int *)) = (long long int)*result;}
@@ -709,7 +747,7 @@ return count;
    flags    parser(const char **format, flags Flags){
         //flags Flags={0};
         //(*format)++;
-        while(**format=='d'||**format=='s'||**format=='i'||**format=='e'||**format=='o'||**format=='E'||**format=='g'||**format=='G'||**format=='f'||**format=='p'){
+        while(**format=='d'||**format=='s'||**format=='i'||**format=='e'||**format=='o'||**format=='E'||**format=='g'||**format=='G'||**format=='f'||**format=='p'||**format=='u'||**format=='c'){
         //   printf("here?:parser163");
     //           case 'e':
     // case 'E':
@@ -717,7 +755,8 @@ return count;
     // case 'G':
     // case 'f':
         switch(**format){
-            
+        case 'c':
+            Flags.c=1;    
         case 'd':
             Flags.integer=1;
             Flags.move_format=2;
@@ -769,5 +808,9 @@ int hex_check(const char** str){
   if((**str >= 48 && **str <= 57) || (**str >= 65 && **str <= 70) ||
           (**str >= 97 && **str <= 102))is_true=1;
           return is_true;
+}
+
+sscanf_write_c(const char** str, va_list arg, flagscanf* Flag){
+  
 }
 

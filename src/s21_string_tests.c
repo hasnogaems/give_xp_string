@@ -8,7 +8,7 @@
 
 
 
-START_TEST(sscanf_1) {
+START_TEST(sscanf_str) {
   char str[] = "Hello, world! 111 0x34ab";
   char str1[100], str2[100];
   int a, b;
@@ -23,6 +23,42 @@ START_TEST(sscanf_1) {
   ck_assert_pstr_eq(str1, str2);
   // ck_assert_pstr_eq(*a, *b);
   // ck_assert_pstr_eq(p1, p2);
+}
+END_TEST
+
+START_TEST(sscanf_int) {
+  char str[] = "Hello, world! 111 0x34ab";
+  char str1[100], str2[100];
+  int a=0, b=0;
+  void* p1, *p2;
+
+
+  s21_size_t len = strlen(str);
+  sscanf(str, "%s%d%p", str1, &a, &p1);
+  s21_sscanf(str, "%s%d%p", str2, &b, &p2);
+  
+  
+ // ck_assert_pstr_eq(str1, str2);
+  ck_assert_int_eq(a, b);
+  // ck_assert_pstr_eq(p1, p2);
+}
+END_TEST
+
+START_TEST(sscanf_ptr) {
+  char str[] = "0x34ab";
+  char str1[100], str2[100];
+  int a, b;
+  void* p1, *p2;
+
+
+  
+  sscanf(str, "%p", &p1);
+  s21_sscanf(str, "%p", &p2);
+  
+  
+ // ck_assert_pstr_eq(str1, str2);
+  //ck_assert_int_eq(*a, *b);
+  ck_assert_ptr_eq(p1, p2);
 }
 END_TEST
 
@@ -2736,8 +2772,9 @@ Suite *s21_string_suite(void) {
 
  
 
-  tcase_add_test(tcase_core, sscanf_1);
-  
+  tcase_add_test(tcase_core, sscanf_str);
+  tcase_add_test(tcase_core, sscanf_int);
+  tcase_add_test(tcase_core, sscanf_ptr);
 
   suite_add_tcase(suite, tcase_core);
 

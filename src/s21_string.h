@@ -30,6 +30,7 @@ typedef struct flags{
     int o;
     int is_unsigned;
     int is_ptr;
+    int c;
 
 } flags;
 
