@@ -751,3 +751,85 @@ int s21_sprintf(char *str, const char *format, ...) {
   int result = str - start_str;
   return result;
 }
+//C#
+void *s21_to_upper(const char *str) {
+  if (str == S21_NULL) return S21_NULL;
+
+  s21_size_t len = s21_strlen(str);
+  char *upper_str =
+      (char *)malloc(len + 1);  // Выделение памяти для копии строки
+
+  if (upper_str == S21_NULL) return S21_NULL;
+
+  for (s21_size_t i = 0; i < len; i++)
+    if (str[i] >= 97 && str[i] <= 122)
+      upper_str[i] = ((int)str[i]) - 32;
+    else
+      upper_str[i] = str[i];
+
+  upper_str[len] = '\0';
+  return upper_str;
+}
+void *s21_to_lower(const char *str) {
+  if (str == S21_NULL) return S21_NULL;
+
+  s21_size_t len = s21_strlen(str);
+  char *lower_str =
+      (char *)malloc(len + 1);  // Выделение памяти для копии строки
+
+  if (lower_str == S21_NULL) return S21_NULL;
+
+  for (s21_size_t i = 0; i < len; i++)
+    if (str[i] >= 65 && str[i] <= 90)
+      lower_str[i] = str[i] + 32;
+    else
+      lower_str[i] = str[i];
+
+  lower_str[len] = '\0';
+
+  return lower_str;
+}
+void *s21_insert(const char *src, const char *str, s21_size_t start_index) {
+  if (src == S21_NULL || str == S21_NULL) return S21_NULL;
+  s21_size_t src_len = s21_strlen(src);
+  s21_size_t str_len = s21_strlen(str);
+
+  if (start_index > src_len) return S21_NULL;
+
+  char *result = (char *)malloc(src_len + str_len + 1);
+
+  if (result == S21_NULL) return S21_NULL;
+
+  s21_memcpy(result, src, start_index);
+  s21_memcpy(result + start_index, str, str_len);
+  s21_memcpy(result + start_index + str_len, src + start_index,
+             src_len - start_index);
+
+  result[src_len + str_len] =
+      '\0';  // Добавление нулевого символа в конце строки
+
+  return result;
+}
+
+void *s21_trim(const char *src, const char *trim_chars) {
+  if (src == S21_NULL || trim_chars == S21_NULL) return S21_NULL;
+  s21_size_t len = s21_strlen(src);
+  s21_size_t result_len = 0;
+  char *result_str = (char *)malloc(len * sizeof(char));
+  int flag = 1;
+  for (s21_size_t i = 0; i < len; i++) {
+    for (s21_size_t j = 0; j < s21_strlen(trim_chars); j++)
+      if (src[i] == trim_chars[j]) {
+        flag = 0;
+        break;
+      }
+    if (flag) {
+      result_str[result_len] = src[i];
+      printf("Результат: \"%c\"\n", src[i]);
+      result_len++;
+    }
+    flag = 1;
+    result_str[result_len] = '\0';
+  }
+  return result_str;
+}

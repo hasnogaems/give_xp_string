@@ -44,7 +44,10 @@ void s21_itos(char *str, long long int num, flag_t *flags);
 void s21_ftos(char *str, double num, flag_t *flags);
 void s21_uitos(char *str, unsigned long num, flag_t *flags);
 int s21_sprintf(char *str, const char *format, ...);
-
+void *s21_to_upper(const char *str);
+void *s21_to_lower(const char *str);
+void *s21_insert(const char *src, const char *str, s21_size_t start_index);
+void *s21_trim(const char *src, const char *trim_chars);
 #define S21EPERM_STR "Operation not permitted"
 #define S21ENOENT_STR "No such file or directory"
 #define S21ESRCH_STR "No such process"
