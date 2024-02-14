@@ -620,9 +620,12 @@ va_start(args, format);
 flagscanf Flagscanf={0};
 if(*format=='\0'||*source=='\0')count=-1;
 while(*format!='\0'&&*source!='\0'){
-    //printf("here?\n");
+      //printf("here?\n");
     while(*format==*source&&*format!='%'){
       format++; source++;
+    }
+    while(*format==' '){
+      format++;
     }
     if(*format=='%'&&Flagscanf.failed==0){
         format++;
@@ -722,7 +725,7 @@ return count;
         sscanf_write_o(arg, source, Flags);
     }
     if(Flags->base.c){
-      sscanf_write_c()
+      sscanf_write_c(source, arg, Flags);
     }
     // if(!Flags->base.string&&!Flags->base.e&&!Flags->base.o&&!Flags->failed){
     //  if(Flags->ll){ 
@@ -756,7 +759,8 @@ return count;
     // case 'f':
         switch(**format){
         case 'c':
-            Flags.c=1;    
+            Flags.c=1;  
+            break;  
         case 'd':
             Flags.integer=1;
             Flags.move_format=2;
@@ -810,7 +814,15 @@ int hex_check(const char** str){
           return is_true;
 }
 
-sscanf_write_c(const char** str, va_list arg, flagscanf* Flag){
-  
+void sscanf_write_c(const char** str, va_list arg, flagscanf* Flags){
+  Flags->failed=1;
+  if(!Flags->asterisk){
+    
+    if(*str && **str!='\0'){
+      *(va_arg(arg, char*))=**str;
+      (*str)++;
+      Flags->failed=0;
+    }
+  }
 }
 

@@ -103,7 +103,7 @@ float a_to_float(char* string);
  int width_check(flagscanf Flags);
  int hex_check(const char** str);
 int complex_while_check(const char** source);
-
+void sscanf_write_c(const char** str, va_list arg, flagscanf* Flags);
 
 #define S21EPERM_STR "Operation not permitted"
 #define S21ENOENT_STR "No such file or directory"

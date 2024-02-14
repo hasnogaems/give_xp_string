@@ -8,6 +8,9 @@ in_progress:
 my_tests:
 	gcc s21_string.c s21_sscanf.c s21_string_tests.c -lm -lcheck -lpthread -lsubunit
 
+my_tests_mac:
+	gcc s21_string.c s21_sscanf.c tc_sscanf.c -lm -lcheck -lpthread
+
 my_tests2:
 	gcc s21_string.c s21_sscanf.c tc_sscanf.c -lm -lcheck -lpthread -lsubunit	
 

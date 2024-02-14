@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <check.h>
+
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,8 +59,11 @@ int main(){
 
   int16_t res2 = sscanf(str, fstr, &a2, &b2, &c2, &d2);
 
- printf("s21=%d orig=%d", res1, res2);
-  
+ printf("s21=%d orig=%d\n", res1, res2);
+ printf("s21=%c orig=%c\n", a1, a2);
+ printf("s21=%c orig=%c\n", b1, b2);
+ printf("s21=%c orig=%c\n", c1, c2);
+ printf("s21=%c orig=%c\n", d1, d2); 
     return 0;
 }
 //sscanf  проверяется на   %s %d и %e
