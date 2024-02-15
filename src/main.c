@@ -51,24 +51,14 @@ int main(){
  
 //   sscanf(str, "%s%d%p", str1, &a, &p1);
 //   s21_sscanf(str, "%s%d%p", str2, &b, &p2);
-  double a1 = 0, a2 = 0, b1 = 0, b2 = 0, c1 = 0, c2 = 0, d1 = 0, d2 = 0;
+ long long a1 = 0, a2 = 0, b1 = 0, b2 = 0, c1 = 0, c2 = 0, d1 = 0, d2 = 0;
+  int32_t n1 = 0, n2 = 5;
 
-  const char str[] = "0.00001 -4123123 4. .";
-  const char fstr[] = "%lf %lf %lf %lf";
+  const char str[BUFF_SIZE] = "50 160 70 80";
+  const char fstr[BUFF_SIZE] = "%lli %lli %n %lli %lli";
 
-  int res1 = s21_sscanf(str, fstr, &a1, &b1, &c1, &d1);
-  int res2 = sscanf(str, fstr, &a2, &b2, &c2, &d2);
-
-printf("double a1 = %lf, a2 = %lf, b1 = %lf, b2 = %lf, c1 = %lf, c2 = %lf, d1 = %lf, d2 = %lf;\n", a1, a2, b1, b2, c1, c2, d1, d2);
-
-printf("const char str[] = \"0.00001 -4123123 4. .\";\n");
-printf("const char fstr[] = \"%%lf %%lf %%lf %%lf\";\n");
-
-printf("s21_sscanf res=%d\n", res1);
-printf("   s21_sscanf reads: a1 = %lf, b1 = %lf, c1 = %lf, d1 = %lf\n", a1, b1, c1, d1);
-
-printf("sscanf res=%d\n");
-printf("   sscanf reads: a2 = %lf, b2 = %lf, c2 = %lf, d2 = %lf\n", a2, b2, c2, d2);
+  int16_t res1 = s21_sscanf(str, fstr, &a1, &b1, &n1, &c1, &d1);
+  int16_t res2 = sscanf(str, fstr, &a2, &b2, &n2, &c2, &d2);
 
 
 

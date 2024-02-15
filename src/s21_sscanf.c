@@ -805,7 +805,7 @@ return count;
    flags    parser(const char **format, flags Flags){
         //flags Flags={0};
         //(*format)++;
-        while(**format=='d'||**format=='s'||**format=='i'||**format=='e'||**format=='o'||**format=='E'||**format=='g'||**format=='G'||**format=='f'||**format=='p'||**format=='u'||**format=='c'){
+        while(**format=='d'||**format=='s'||**format=='i'||**format=='e'||**format=='o'||**format=='E'||**format=='g'||**format=='G'||**format=='f'||**format=='p'||**format=='u'||**format=='c'||**format=='n'){
         //   printf("here?:parser163");
     //           case 'e':
     // case 'E':
@@ -830,6 +830,9 @@ return count;
             break;  
         case 'i':
             Flags.decimal_octal_hex=1;
+            break;   
+        case 'n':
+            Flags.n=1;
             break;   
          case 'p':
             Flags.decimal_octal_hex=1;
