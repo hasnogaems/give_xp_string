@@ -3,7 +3,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-//#include <string.h>
+#include <string.h>
 #include "s21_string.h"
 #define BUFF_SIZE 100
 int main(){
@@ -51,7 +51,7 @@ int main(){
  
 //   sscanf(str, "%s%d%p", str1, &a, &p1);
 //   s21_sscanf(str, "%s%d%p", str2, &b, &p2);
- char s1[BUFF_SIZE] = {'\0'};
+  char s1[BUFF_SIZE] = {'\0'};
   char s2[BUFF_SIZE] = {'\0'};
   char s3[BUFF_SIZE] = {'\0'};
   char s4[BUFF_SIZE] = {'\0'};
@@ -61,14 +61,11 @@ int main(){
   char s7[BUFF_SIZE] = {'\0'};
   char s8[BUFF_SIZE] = {'\0'};
 
-  const char str[] = "aboba\tkepaboba floppa shleppa koooppa ap p p p p";
-  const char fstr[] = "%*s%*s%*s%*s";
+  const char str[] = "aboba\tshlepa\tasdfasdf\tasdfasdf";
+  const char fstr[] = "%150s%1s%1s\t%3s";
 
-  int16_t res1 = s21_sscanf(str, fstr);
-  int16_t res2 = sscanf(str, fstr);
-
-  
-  //printf("s21%d orig%d\n", a1, a2);
+  int16_t res1 = s21_sscanf(str, fstr, s1, s2, s3, s4);
+  int16_t res2 = sscanf(str, fstr, s5, s6, s7, s8);
   
 
     return 0;

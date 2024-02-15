@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "s21_string.h"
-#define BUFF_SIZE 100
+#define BUFF_SIZE 500
 
 START_TEST(EOF1) {
   char fstr[] = "%d";

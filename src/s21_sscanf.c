@@ -1,12 +1,13 @@
 #include "s21_string.h"
 #include <stdio.h>
 #include <math.h>
-char* scanf_write_string(flagscanf* Flags, va_list arg, const char** source){
+void scanf_write_string(flagscanf* Flags, va_list arg, const char** source){
 
     while(**source==' '){
         (*source)++;
     }
-    char* variable=va_arg(arg, char*);
+ if(!Flags->asterisk){
+ char* variable=va_arg(arg, char*);
     
     int wcount=0;//счетчик сколько раз мы записали, чтобы отмотать
     while(**source!=' '&&**source!='\0'&&width_check(*Flags)&&**source!='\t'){ //пишем из source в буфер, а почему нельзя сразу писать в variable?
@@ -18,7 +19,7 @@ char* scanf_write_string(flagscanf* Flags, va_list arg, const char** source){
 
     }
 
-    variable[wcount]='\0';
+    variable[wcount]='\0';}
     // while(wcount>=0){
     // variable[wcount]=buffer[wcount];//segfault
     //     wcount--;
@@ -31,7 +32,7 @@ char* scanf_write_string(flagscanf* Flags, va_list arg, const char** source){
 
     
 while(**source=='\t')(*source)++;    
-return variable;
+
 
 }
 
@@ -171,6 +172,7 @@ void scanf_write_int(flagscanf* Flags, const char** source, long long int* resul
                if(Flags->width!=-1)
                Flags->width--;
             }
+            *(pbuffer)='\0';
             //if(Flags->width>0)buffer[Flags->width]='\0';
             
         i_i=atoi(buffer); //buffer почему-то остается в памяти, поэтому заводим счетчик count и зануляем buffer после atoi
@@ -642,6 +644,7 @@ while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){
     while(*format==*source&&*format!='%'){
       format++; source++;
     }
+    while(*format=='\t')format++;
     
     if(*format=='%'&&Flagscanf.failed==0){
         format++;
@@ -664,7 +667,7 @@ while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){
     }
     // if(Flagscanf.asterisk)format++;
     // format++;
-    if(!Flagscanf.failed&&!Flagscanf.asterisk)count++;
+     if(!Flagscanf.failed&&!Flagscanf.asterisk)count++;
     //if(Flagscanf.failed)count=-1;
     }
 
@@ -683,7 +686,7 @@ return count;
  void scanfparser_spec(const char **format, flagscanf* Flags){
         
         //format++;
-        while(**format!='\0'&&**format!='%'&&**format!=' '){
+        while(**format!='\0'&&**format!='%'&&**format!=' '&&**format!='\t'){
            // printf("here?:82");
         switch(**format){
            // case'[':

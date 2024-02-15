@@ -83,7 +83,7 @@ void scanfparser_spec(const char **format, flagscanf* Flags);
 void scanf_concat_type(flagscanf* Flags, va_list arg, const char** source);
 flags    parser(const char **format, flags Flags);
 void scanf_write_int(flagscanf* Flags, const char** source, long long int* result, va_list arg);
-char* scanf_write_string(flagscanf* Flags, va_list arg, const char** source);
+void scanf_write_string(flagscanf* Flags, va_list arg, const char** source);
 void scanf_write_decimal_octal_hex(const char** source, flagscanf*, long long int* result, va_list arg);
 void data_type_for_i(long long int* result, va_list , flagscanf* Flags);
 int is_int_f(char c);
