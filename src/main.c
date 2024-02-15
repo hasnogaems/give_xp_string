@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include <stdint.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,14 +52,17 @@ int main(){
 //   sscanf(str, "%s%d%p", str1, &a, &p1);
 //   s21_sscanf(str, "%s%d%p", str2, &b, &p2);
  long long a1 = 0, a2 = 0, b1 = 0, b2 = 0, c1 = 0, c2 = 0, d1 = 0, d2 = 0;
-  int32_t n1 = 0, n2 = 5;
+  int n1 = 0, n2 = 5;
 
   const char str[BUFF_SIZE] = "50 160 70 80";
   const char fstr[BUFF_SIZE] = "%lli %lli %n %lli %lli";
 
-  int16_t res1 = s21_sscanf(str, fstr, &a1, &b1, &n1, &c1, &d1);
+  int res1 = s21_sscanf(str, fstr, &a1, &b1, &n1, &c1, &d1);
   int16_t res2 = sscanf(str, fstr, &a2, &b2, &n2, &c2, &d2);
 
+
+printf("   s21_sscanf reads: a1 = %lld, b1 = %lld, n1 = %d (characters read by s21_sscanf), c1 = %lld, d1 = %lld, res1 = %d\n", a1, b1, n1, c1, d1, res1);
+printf("   sscanf reads: a2 = %lld, b2 = %lld, n2 = %d, c2 = %lld, d2 = %lld, res2 = %d\n", a2, b2, n2, c2, d2, res2);
 
 
   

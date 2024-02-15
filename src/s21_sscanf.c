@@ -666,6 +666,7 @@ va_start(args, format);
 // printf("INT X IN MAIN=%d\n", *x);
 
 flagscanf Flagscanf={0};
+const char* start = source;
 if(*format=='\0'||*source=='\0')count=-1;
 while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){
       //printf("here?\n");
@@ -689,6 +690,8 @@ while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){
       //  printf("test");
         //Flagscanf=scanfparser_flags(&format); // заполняем от ' ' до 0 почему не растет указатель я разименовываю 1 раз, значит должен расти формат
         scanfparser_spec(&format, &Flagscanf); // заполняем спецификаторы например d или s
+        if(Flagscanf.base.n){
+      if (!Flagscanf.asterisk) *(va_arg(args, int *)) = source - start;}
         //Flagscanf=scanfparser(format);
         scanf_concat_type(&Flagscanf, args, &source); //возвращаем то, что мы пишем в переменную,
         //va_arg(args,char*);
@@ -701,7 +704,7 @@ while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){
     }
     // if(Flagscanf.asterisk)format++;
     // format++;
-     if(!Flagscanf.failed&&!Flagscanf.asterisk)count++;
+     if(!Flagscanf.failed&&!Flagscanf.asterisk&&!Flagscanf.base.n)count++;
     //if(Flagscanf.failed)count=-1;
     }
 
@@ -781,6 +784,8 @@ return count;
     if(Flags->base.c){
       sscanf_write_c(source, arg, Flags);
     }
+    
+    
     // if(!Flags->base.string&&!Flags->base.e&&!Flags->base.o&&!Flags->failed){
     //  if(Flags->ll){ 
     //     *(va_arg(arg, long long int *)) = (long long int)*result;}
