@@ -29,7 +29,15 @@ void scanf_write_string(flagscanf* Flags, va_list arg, const char** source){
     
         // printf("\nBUFFER=%s\n", buffer);
         // printf("VARIABLE=%s\n", variable);
+if(Flags->asterisk)
+while(**source!=' '&&**source!='\0'&&width_check(*Flags)&&**source!='\t'){ //пишем из source в буфер, а почему нельзя сразу писать в variable?
+        
+        ;
+        (*source)++;
+        if(Flags->width!=-1)Flags->width--;
 
+
+    }
     
 while(**source=='\t')(*source)++;    
 
@@ -309,7 +317,7 @@ pbuffer--;
 
 void sscanf_write_e(va_list arg, const char** source, flagscanf* Flags){
     Flags->failed=1;
-    float* variable_address=va_arg(arg, float*);
+   long double* variable_address=calloc(1, sizeof(long double*));
    
     
     while(**source==' ')(*source)++;
@@ -317,10 +325,11 @@ void sscanf_write_e(va_list arg, const char** source, flagscanf* Flags){
     char* pbuffer=buffer;
     number_type type={0};
     // int minus=0;
-    if(**source>=0&&**source<=57&&**source!=32){
+    if(**source>=0&&**source<=57&&**source!=32&&**source!=46){
         Flags->failed=0;
         // if(**source=='-')minus=1;
         if(**source!='\0'&&**source!=' '){
+            
             if(**source=='0'&&*(*source+1)=='x'){
                 type.is_hex=1; (*source)=(*source)+2;}//skip 0x to number
             
@@ -347,7 +356,7 @@ void sscanf_write_e(va_list arg, const char** source, flagscanf* Flags){
     if(type.is_scientific)
     *variable_address=scientific_to_float(buffer); 
     else{
-    *variable_address=a_to_float(buffer);}
+    *variable_address=(long double)a_to_float(buffer);}
     if(Flags->failed==1){
         if((s21_strncmp(*source, "inf", 3)==0) ||
         (s21_strncmp(*source, "INF", 3)==0) ||
@@ -373,6 +382,17 @@ void sscanf_write_e(va_list arg, const char** source, flagscanf* Flags){
         }    
 
     } 
+      if (!Flags->asterisk) {
+    if (!Flags->failed) {
+      if (Flags->L) {
+        *(va_arg(arg, long double *)) = (long double)*variable_address;
+      } else if (Flags->l) {
+        *(va_arg(arg, double *)) = (double)(*variable_address);
+      } else {
+        *(va_arg(arg, float *)) = (float)(*variable_address);
+      }
+    }
+  }
     
             
     }
@@ -426,12 +446,12 @@ int dec_convert(int input, int base){
 
 
 
-    float scientific_to_float(char* string){
-    char pre_dot[1000000];//тут был stack smashing если маленькие размеры массивов
-    float pre_dot_float;
-    char post_dot[1000000]="000000";
-    float post_dot_float;
-    char exponent[1000000];
+    long double scientific_to_float(char* string){
+    char pre_dot[100000]={'\0'};//тут был stack smashing если маленькие размеры массивов
+    long double pre_dot_float=0.0;
+    char post_dot[100000]={'\0'};;
+    long double post_dot_float=0.0;
+    char exponent[100000]={'\0'};;
     int count=0;
     while(*string!='.'&&*string!='e'&&*string!='E'){
         pre_dot[count]=*(string);
@@ -448,7 +468,7 @@ int dec_convert(int input, int base){
     }
     post_dot[count]='\0';
     count=0;
-    while(*string=='+'||*string=='e'||*string=='E'){
+    while(*string=='e'||*string=='E'){
         string++;
     }
 
@@ -458,15 +478,17 @@ int dec_convert(int input, int base){
     }
     exponent[count]='\0';
  int i=0; //количество знаков, заводим для знака после точки
- pre_dot_float=(float)char_to_dec(&i, pre_dot);
+ pre_dot_float=char_to_dec(&i, pre_dot);
  i=0;
- post_dot_float=(float)char_to_dec(&i, post_dot);
+ 
+ post_dot_float=char_to_dec(&i, post_dot);
+ if(pre_dot[0]=='-')post_dot_float *= -1.0;
  while(i>0){
-    post_dot_float /=10;
+    post_dot_float /=10.0;
     i--;
 
  }
- float return_this=pre_dot_float+post_dot_float;
+ long double return_this=pre_dot_float+post_dot_float;
  return_this=exponent_f(exponent, return_this);
 
 
@@ -483,28 +505,40 @@ int dec_convert(int input, int base){
 
    long double char_to_dec(int* i, char str[]){
     long double result = 0.0;
+    long int sign=set_sign(&str);
     while(*str>=48&&*str<=57) {//0 to 9
     (*i)++;
-    result *= 10;
+    result *= 10.0;
     result += *str-'0';
     str++;
       }
-       return result;
+       return result*sign;
   }
 
-  long double exponent_f(char exp[], float pre_plus_post){
+  long double exponent_f(char exp[], long double pre_plus_post){ //тут тоже была ошибка точности если передавали prepluspost как float
     int is_negative=0; 
-    float return_this;
+    float scale = 0.0;
+    long double return_this=pre_plus_post;
+
     if(*exp=='-'){
             is_negative=1;
             exp++; }  
+            long double exp_ld =(long double)atoi(exp);
             
     
 if(!is_negative){
+    scale = 10.0;
+    while(exp_ld>0){
+        return_this *=scale;
+exp_ld--;
+    }
    // printf("AAAAA%lf", (((float)atoi(exp))*10));
-return_this=pre_plus_post*s21_pow(10, (float)atoi(exp));
+
 
 };
+if(is_negative){
+    return_this=pre_plus_post/s21_pow(10, (float)atoi(exp));
+}
 //printf("\n\nEXPONENTED=%f\n\n", return_this);
 return return_this;
   }
@@ -565,15 +599,15 @@ int convert_to_dec(int input, int base, int minus){
 
 
 
-float a_to_float(char* string){
-    char pre_dot[10000];
-    float pre_dot_float;
-    char post_dot[10000]="000000";
-    float post_dot_float;
+long double a_to_float(char* string){
+    char pre_dot[10000]={'\0'};
+    long double pre_dot_float=0.0;
+    char post_dot[10000]={'\0'};
+    long double post_dot_float=0.0;
 
-    long long int sign=set_sign(string);
+    long long int sign=set_sign(&string);
     int count=0;
-    while(*string!='.'){
+    while(*string!='.'&&*string!='\0'){
         pre_dot[count]=*(string);
         string++;
         count++;
@@ -593,27 +627,27 @@ float a_to_float(char* string){
     
     
  int i=0; //количество знаков, заводим для знака после точки
- pre_dot_float=(float)char_to_dec(&i, pre_dot);
+ pre_dot_float=(long double)char_to_dec(&i, pre_dot);
  i=0;
- post_dot_float=(float)char_to_dec(&i, post_dot);
+ post_dot_float=(long double)char_to_dec(&i, post_dot);
  while(i>0){
-    post_dot_float /=10;
+    post_dot_float /=10.0;
     i--;
 
  }
- float return_this=pre_dot_float+post_dot_float;
+ long double return_this=(pre_dot_float+post_dot_float); //тут если return_this type float то начинают лезть микропогрешности
  
     return return_this*sign;
 
    }
 
- long int set_sign(char *str) {
+ long int set_sign(char **str) {
   long int sign = 1;
-  if (*str == '+') {
-    str++;
-  } else if (*str == '-') {
+  if (**str == '+') {
+    (*str)++;
+  } else if (**str == '-') {
     sign = -1.0;
-    str++;
+    (*str)++;
     
   }
   return sign;
@@ -677,7 +711,7 @@ while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){
 
 //printf("Flagscanf:\nbase.integer=%d\nbase.string=%d\nfplus=%d\n", Flagscanf.base.integer, Flagscanf.base.string, Flagscanf.fplus);
 //printf("Flagscanf:\nbase->integer=%d\n", Flagscanf.base.integer);
-if(count==0&&!Flagscanf.asterisk)count=-1;
+//if(count==0&&!Flagscanf.asterisk)count=-1;
 return count;
 }
 

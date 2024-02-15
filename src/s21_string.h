@@ -43,6 +43,7 @@ typedef struct flagscanf{
     int l, ll, h, L;
     int width;
     int asterisk;
+    const char *start_of_str;
 } flagscanf;
 
 typedef struct {
@@ -88,15 +89,15 @@ void scanf_write_decimal_octal_hex(const char** source, flagscanf*, long long in
 void data_type_for_i(long long int* result, va_list , flagscanf* Flags);
 int is_int_f(char c);
 int dec_convert(int input, int base);
-float scientific_to_float(char* string);
+long double scientific_to_float(char* string);
 long double char_to_dec(int* i, char str[]);
-long double exponent_f(char exp[], float pre_plus_post);
+long double exponent_f(char exp[], long double pre_plus_post);
 void sscanf_write_e(va_list arg, const char** source, flagscanf*);
 long long int hex_to_dex(char str[], int base, int minus, const char**);
 int convert_to_dec(int input, int base, int minus);
 void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags);
-float a_to_float(char* string);
- long int set_sign(char *str);
+long double a_to_float(char* string);
+ long int set_sign(char **str);
  void set_params(flagscanf *Flags, const char **format);
  void width_function(const char **format, int *width);
  unsigned long long s21_pow(int base, int exp);

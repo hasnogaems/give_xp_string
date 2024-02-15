@@ -5,6 +5,9 @@ LIBS = -lm
 in_progress:
 	gcc main.c s21_string.c s21_sscanf.c -lm
 
+sanitize:
+	gcc main.c s21_string.c s21_sscanf.c -fsanitize=address -lm
+
 my_tests:
 	gcc s21_string.c s21_sscanf.c s21_string_tests.c -lm -lcheck -lpthread -lsubunit
 
@@ -12,7 +15,10 @@ my_tests_mac:
 	gcc s21_string.c s21_sscanf.c tc_sscanf2.c -lm -lcheck -lpthread
 
 my_tests2:
-	gcc s21_string.c s21_sscanf.c tc_sscanf.c -lm -lcheck -lpthread -lsubunit	
+	gcc s21_string.c s21_sscanf.c tc_sscanf.c -lm -lcheck -lpthread -lsubunit
+
+browntod:
+	gcc s21_string.c s21_sscanf.c test_sscanf.c -lm -lcheck -lpthread -lsubunit	
 
 flags:
 	gcc $(CFLAGS) main.c s21_string.c s21_sscanf.c -lm 
