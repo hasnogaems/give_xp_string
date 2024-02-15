@@ -5,6 +5,7 @@
 #include <stdlib.h>
 //#include <string.h>
 #include "s21_string.h"
+#define BUFF_SIZE 100
 int main(){
     char strrr[80]="HEEHEEHEE";
     char str21[]="HEY";//ставим сюда значение массива оно отрабатывает нормально, указываем просто размер и оно пишет не то, с размером работает 6 работает 7 не работает а на убунте работает не взирая на это
@@ -25,9 +26,9 @@ int main(){
 //     printf("\nmain printf string:%f %s %d\n", y, str21, zz1);
 //     printf("orig:%f %s %d\n", i, str, zz);
    // int inty=13, iinty=14;
-     ii=sscanf("6666 666", "%*u %d", &zz1);
-//    // s21sscanf("777  test  1111 2 3 4 5", "%s%d%d", str21, &y, &z);
-     bb=s21_sscanf("66666 6666", "%*u %d", &zz);
+ //    ii=sscanf("6666 666", "%*u %d", &zz1);
+//    // s2my_tests1sscanf("777  test  1111 2 3 4 5", "%s%d%d", str21, &y, &z);
+ //    bb=s21_sscanf("66666 6666", "%*u %d", &zz);
      printf("\nmain printf string:%d\n", zz);
 
 //       void* pointer21, *pointer;
@@ -50,20 +51,26 @@ int main(){
  
 //   sscanf(str, "%s%d%p", str1, &a, &p1);
 //   s21_sscanf(str, "%s%d%p", str2, &b, &p2);
+ char s1[BUFF_SIZE] = {'\0'};
+  char s2[BUFF_SIZE] = {'\0'};
+  char s3[BUFF_SIZE] = {'\0'};
+  char s4[BUFF_SIZE] = {'\0'};
 
-    char fstr[] = "%c %c %c %c";
-  char str[] = "   a     b c d";
-  int16_t a1 = 0, a2 = 5, b1 = 0, b2 = 5, c1 = 0, c2 = 5, d1 = 0, d2 = 5;
+  char s5[BUFF_SIZE] = {'\0'};
+  char s6[BUFF_SIZE] = {'\0'};
+  char s7[BUFF_SIZE] = {'\0'};
+  char s8[BUFF_SIZE] = {'\0'};
 
-  int16_t res1 = s21_sscanf(str, fstr, &a1, &b1, &c1, &d1);
+  const char str[] = "aboba\tkepaboba floppa shleppa koooppa ap p p p p";
+  const char fstr[] = "%*s%*s%*s%*s";
 
-  int16_t res2 = sscanf(str, fstr, &a2, &b2, &c2, &d2);
+  int16_t res1 = s21_sscanf(str, fstr);
+  int16_t res2 = sscanf(str, fstr);
 
- printf("s21=%d orig=%d\n", res1, res2);
- printf("s21=%c orig=%c\n", a1, a2);
- printf("s21=%c orig=%c\n", b1, b2);
- printf("s21=%c orig=%c\n", c1, c2);
- printf("s21=%c orig=%c\n", d1, d2); 
+  
+  //printf("s21%d orig%d\n", a1, a2);
+  
+
     return 0;
 }
 //sscanf  проверяется на   %s %d и %e

@@ -9,7 +9,7 @@ char* scanf_write_string(flagscanf* Flags, va_list arg, const char** source){
     char* variable=va_arg(arg, char*);
     
     int wcount=0;//счетчик сколько раз мы записали, чтобы отмотать
-    while(**source!=' '&&**source!='\0'&&width_check(*Flags)){ //пишем из source в буфер, а почему нельзя сразу писать в variable?
+    while(**source!=' '&&**source!='\0'&&width_check(*Flags)&&**source!='\t'){ //пишем из source в буфер, а почему нельзя сразу писать в variable?
         variable[wcount]=**source;
         wcount++;
         (*source)++;
@@ -30,7 +30,7 @@ char* scanf_write_string(flagscanf* Flags, va_list arg, const char** source){
         // printf("VARIABLE=%s\n", variable);
 
     
-    
+while(**source=='\t')(*source)++;    
 return variable;
 
 }
@@ -48,6 +48,7 @@ return variable;
     int is_hex=0;
     int is_octal=0;
     int minus=0;
+    int start=1;
   
     if(**source=='-'){
         minus=1;(*source)++;
@@ -63,8 +64,9 @@ return variable;
                 is_octal=1;(*source)++;
                 }
              if(!is_hex&&!is_octal)is_int=1;//пишем в variable только если флаг поднят, если я сделаю int is_int прямо сдесь это плохо, это значит будет переинициализация каждый цикл или норм и оно не будет нагружать программу и инициализирует только 1 раз?
-             while(**source!=' '&&**source!='\0'&&(is_octal ? **source<'8':1)&&(is_hex ? hex_check(source):1)&&(is_int ? is_int_f(**source):1)&&width_check(*Flags)){ //если не поставить последнее условие в скобки то оно считает все до ? условием, и оно никогда не выполняется, следовательно всегда 1
+             while(**source!=' '&&**source!='\0'&&(is_octal ? **source<'8':1)&&(is_hex ? hex_check(source):1)&&(is_int ? is_int_f(**source):1)&&width_check(*Flags)&&!((**source==43||**source==45)&&!start)){ //если не поставить последнее условие в скобки то оно считает все до ? условием, и оно никогда не выполняется, следовательно всегда 1
                 *pbuffer=**source;
+                start=0;
                //cannot do that? (&buffer)++;
                //cannot do that? buffer++;
                //must make char* pbuffer=buffer ?
@@ -86,7 +88,7 @@ return variable;
 // }
     }
     buffer_integer=atoi(buffer);
-    printf("buffer_integer=%d", buffer_integer);
+    //printf("buffer_integer=%d", buffer_integer);
 //long long result;
 if(!Flags->failed&&Flags->asterisk != 1){
     if(is_hex){
@@ -136,6 +138,14 @@ void data_type_for_i(long long int* result, va_list arg, flagscanf* Flags){
   }
 
 
+int double_sign_check(const char** source, flagscanf* Flags){
+  int is_true=0;
+  if(**source==43&&*((*source)+1)==43)is_true=1;
+  if(**source==45&&*((*source)+1)==45)is_true=1;
+  if((**source==45||**source==43)&&Flags->width==1)is_true=1;
+    return is_true;
+
+}
 
 void scanf_write_int(flagscanf* Flags, const char** source, long long int* result, va_list arg){
     Flags->failed=1;
@@ -145,14 +155,16 @@ void scanf_write_int(flagscanf* Flags, const char** source, long long int* resul
     int i_i;
     char buffer[1000];
     int count=0;
+    int start=1;
     char* pbuffer=buffer;
     int is_int=0;//вырастет только если была запись в int
-    if(**source!='\0'&&(**source>=0&&**source<=57&&**source!=32)){ //это нужно чтобы не двигало курсор если мы пытаемся прочитать строку как d
+    if(**source!='\0'&&(**source>=0&&**source<=57&&**source!=32)&&!double_sign_check(source, Flags)){ //это нужно чтобы не двигало курсор если мы пытаемся прочитать строку как d
     while(**source!='\0'&&**source!=' '){
         if(**source>=0&&**source<=57&&**source!=32){
             is_int=1; Flags->failed=0;
-            while(**source!=' '&&**source!='\0'&&width_check(*Flags)){
+            while(**source!=' '&&**source!='\0'&&width_check(*Flags)&&!((**source==43||**source==45)&&!start)&&is_int_f(**source)){
                 *pbuffer=**source;
+                start=0;
                 pbuffer++;
                 (*source)++;
                count++;
@@ -514,7 +526,7 @@ int break_=0;
     if (*str >= 48 && *str <= 55) {
       result = (*str - '0') + result * base;
       str++;
-      (*source)++;
+      //(*source)++;
       
     } else if ((*str >= 56 && *str <= 57) && (base != 8)) {
       result = (*str - '0') + result * base;
@@ -524,11 +536,11 @@ int break_=0;
     } else if ((*str >= 65 && *str <= 70) && (base != 8) && (base != 10)) {
       result = (*str - 55) + result * base;
       str++;
-      (*source)++;
+      //(*source)++;
     } else if ((*str >= 97 && *str <= 102) && (base != 8) && (base != 10)) {
       result = (*str - 87) + result * base;
       str++;
-      (*source)++;
+      //(*source)++;
     }
     else{break_=1;}
     
@@ -619,14 +631,18 @@ va_start(args, format);
 
 flagscanf Flagscanf={0};
 if(*format=='\0'||*source=='\0')count=-1;
-while(*format!='\0'&&*source!='\0'){
+while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){
       //printf("here?\n");
+      while(*format==' '){
+      format++;
+      while(*source==' '){
+        source++;
+      }
+    }
     while(*format==*source&&*format!='%'){
       format++; source++;
     }
-    while(*format==' '){
-      format++;
-    }
+    
     if(*format=='%'&&Flagscanf.failed==0){
         format++;
        
@@ -635,7 +651,7 @@ while(*format!='\0'&&*source!='\0'){
         set_params(&Flagscanf, &format);
       //  printf("test");
         //Flagscanf=scanfparser_flags(&format); // заполняем от ' ' до 0 почему не растет указатель я разименовываю 1 раз, значит должен расти формат
-        scanfparser_spec(format, &Flagscanf); // заполняем спецификаторы например d или s
+        scanfparser_spec(&format, &Flagscanf); // заполняем спецификаторы например d или s
         //Flagscanf=scanfparser(format);
         scanf_concat_type(&Flagscanf, args, &source); //возвращаем то, что мы пишем в переменную,
         //va_arg(args,char*);
@@ -646,36 +662,37 @@ while(*format!='\0'&&*source!='\0'){
 
         
     }
-    format++;
-    if(!Flagscanf.failed)count++;
-    else{
-      count=-1;
+    // if(Flagscanf.asterisk)format++;
+    // format++;
+    if(!Flagscanf.failed&&!Flagscanf.asterisk)count++;
+    //if(Flagscanf.failed)count=-1;
     }
 
 
-}
+
 
 
 //printf("Flagscanf:\nbase.integer=%d\nbase.string=%d\nfplus=%d\n", Flagscanf.base.integer, Flagscanf.base.string, Flagscanf.fplus);
 //printf("Flagscanf:\nbase->integer=%d\n", Flagscanf.base.integer);
+if(count==0&&!Flagscanf.asterisk)count=-1;
 return count;
 }
 
 
 
- void scanfparser_spec(const char *format, flagscanf* Flags){
+ void scanfparser_spec(const char **format, flagscanf* Flags){
         
         //format++;
-        while(*format!='\0'&&*format!='%'&&*format!=' '){
+        while(**format!='\0'&&**format!='%'&&**format!=' '){
            // printf("here?:82");
-        switch(*format){
+        switch(**format){
            // case'[':
                 // logic parsing regular
                 //Flags->regular == NULL;
                // break;
             case 'h':
             Flags->h=1;
-            format++;
+            (*format)++;
             break;   
             case 'l':
             if(Flags->l==1){
@@ -684,18 +701,18 @@ return count;
             else{
             Flags->l=1;}
                 
-            format++;//странно что здесь отрабатывает нормально сдвиг
+            (*format)++;//странно что здесь отрабатывает нормально сдвиг
             break;
             case 'L':
             Flags->L=1;
-            format++;
+            (*format)++;
             break;
             case '*':
             Flags->asterisk=1;
-            format++;
+            (*format)++;
             break;
             default:
-                Flags->base = parser(&format, Flags->base); 
+                Flags->base = parser(format, Flags->base); 
         }
     //format++;
 
@@ -745,6 +762,7 @@ return count;
 
    
     //return (void*)add_this; //мы допишем это в str вместо %d
+    free(result);
    } 
 
    flags    parser(const char **format, flags Flags){
@@ -815,7 +833,7 @@ int hex_check(const char** str){
 }
 
 void sscanf_write_c(const char** str, va_list arg, flagscanf* Flags){
-  Flags->failed=1;
+ if(!Flags->asterisk) Flags->failed=1;
   if(!Flags->asterisk){
     
     if(*str && **str!='\0'){
@@ -824,5 +842,6 @@ void sscanf_write_c(const char** str, va_list arg, flagscanf* Flags){
       Flags->failed=0;
     }
   }
+  if(Flags->asterisk)(*str)++;
 }
 

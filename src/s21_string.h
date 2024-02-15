@@ -79,7 +79,7 @@ void s21_uitos(char *str, unsigned long num, flag_t *flags);
 int s21_sprintf(char *str, const char *format, ...);
 int s21_sscanf(const char* source, const char *format, ...);
 flagscanf scanfparser_flags(const char** format);
-void scanfparser_spec(const char *format, flagscanf* Flags);
+void scanfparser_spec(const char **format, flagscanf* Flags);
 void scanf_concat_type(flagscanf* Flags, va_list arg, const char** source);
 flags    parser(const char **format, flags Flags);
 void scanf_write_int(flagscanf* Flags, const char** source, long long int* result, va_list arg);
