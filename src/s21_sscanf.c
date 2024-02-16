@@ -289,7 +289,7 @@ void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags){
                
                 if(**source=='0'&&is_int_f(*(*source)+1)&&!is_hex){
                    // if(**source=='0'&&is_int_f(&((*source)+1))){ почему так нельзя хотел передавать функции указатель на указатель, переделал функцию чтобы брала чар
-                is_octal=1;(*source)++;
+                is_octal=1; //width-- to compensate for skipped 0, actually just removing (*source)++ fixed 2 checks
                 }
              if(!is_hex&&!is_octal)is_int=1;//пишем в variable только если флаг поднят, если я сделаю int is_int прямо сдесь это плохо, это значит будет переинициализация каждый цикл или норм и оно не будет нагружать программу и инициализирует только 1 раз?
              
