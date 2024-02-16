@@ -62,6 +62,7 @@ while(**source=='\t')(*source)++;
     if(**source=='-'){
         minus=1;(*source)++;
     }
+    
     if(**source==' '||(**source>=0&&**source<=57&&**source!=32)){
         Flags->failed=0;
         if(**source!='\0'&&**source!=' '&&(is_octal ? **source<'8':1)){ //вообще ведь нельзя вставить if в while условие? только через ?
@@ -95,6 +96,11 @@ while(**source=='\t')(*source)++;
 // count_reverse--;
 // pbuffer--;
 // }
+    }
+    if(**source==' '||(**source>=0&&**source<=57&&**source!=32)||(**source>=65&&**source<=70)||(**source>=97&&**source<=102)){
+*result=**source;
+Flags->failed=0;
+(*source)++;
     }
     buffer_integer=atoi(buffer);
     //printf("buffer_integer=%d", buffer_integer);
@@ -810,7 +816,7 @@ return count;
    flags    parser(const char **format, flags Flags){
         //flags Flags={0};
         //(*format)++;
-        while(**format=='d'||**format=='s'||**format=='i'||**format=='e'||**format=='o'||**format=='E'||**format=='g'||**format=='G'||**format=='f'||**format=='p'||**format=='u'||**format=='c'||**format=='n'){
+        while(**format=='d'||**format=='s'||**format=='i'||**format=='e'||**format=='o'||**format=='E'||**format=='g'||**format=='G'||**format=='f'||**format=='p'||**format=='u'||**format=='c'||**format=='n'||**format=='x'||**format=='X'){
         //   printf("here?:parser163");
     //           case 'e':
     // case 'E':
@@ -836,6 +842,10 @@ return count;
         case 'i':
             Flags.decimal_octal_hex=1;
             break;   
+        case 'x':
+        case 'X':
+            Flags.decimal_octal_hex=1;
+            break;    
         case 'n':
             Flags.n=1;
             break;   
