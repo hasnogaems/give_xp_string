@@ -51,48 +51,12 @@ int main(){
  
 //   sscanf(str, "%s%d%p", str1, &a, &p1);
 //   s21_sscanf(str, "%s%d%p", str2, &b, &p2);
-char str1[7] = {0};
-  char str2[7] = {0};
-
-  char c1 = '0';
-  char c2 = '0';
-
-  float f1 = 0.0;
-  float f2 = 0.0;
-
-  int x1 = 0x0;
-  int x2 = 0x0;
-  unsigned int x3 = 0x0;
-  unsigned x4 = 0x0;
-
-  void *ptr1 = 0x0;
-  void *ptr2 = 0x0;
-
-  int a1 = 0;
-  int a2 = 0;
-  unsigned int u1 = 0;
-  unsigned int u2 = 0;
-
-  int n1 = 0;
-  int n2 = 0;
-  int n3 = 0;
-  int n4 = 0;
+char str1[6] = {0};
+  char str2[6] = {0};
   int result1 = 0;
   int result2 = 0;
-
-  result1 = s21_sscanf("string 6.1e+1c 20    0x2024        0x2024 -120 0256",
-                       "%s%e%n%c%u%i%p%d%o%n", str1, &f1, &n1, &c1, &u1, &x1,
-                       &ptr1, &a1, &x3, &n3);
-  result2 = sscanf("string 6.1e+1c 20    0x2024        0x2024 -120 0256",
-                   "%s%e%n%c%u%i%p%d%o%n", str2, &f2, &n2, &c2, &u2, &x2, &ptr2,
-                   &a2, &x4, &n4);
-
-
-printf("Values after s21_sscanf:\n");
-printf("str1 = \"%s\", f1 = %f, n1 = %d, c1 = %c, u1 = %u, x1 = %d, ptr1 = %p, a1 = %d, x3 = %u, n3 = %d, result1 = %d\n", str1, f1, n1, c1, u1, x1, ptr1, a1, x3, n3, result1);
-
-printf("\nValues after sscanf:\n");
-printf("str2 = \"%s\", f2 = %f, n2 = %d, c2 = %c, u2 = %u, x2 = %d, ptr2 = %p, a2 = %d, x4 = %u, n4 = %d, result2 = %d\n", str2, f2, n2, c2, u2, x2, ptr2, a2, x4, n4, result2);
+  result1 = s21_sscanf("c str 6.1e+1 0x2024 world", "%*c%*s%*e%*x%s", str1);
+  result2 = sscanf("c str 6.1e+1 0x2024 world", "%*c%*s%*e%*x%s", str2);
 
 
 

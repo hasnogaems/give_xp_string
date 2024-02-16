@@ -137,7 +137,7 @@ if(!Flags->failed&&Flags->asterisk != 1){
        *result=minus ? -1.0*buffer_integer:1*buffer_integer;
     }
 }
-data_type_for_i(result, arg, Flags);
+if(!Flags->asterisk){ data_type_for_i(result, arg, Flags);}
 
  
        
@@ -311,7 +311,7 @@ void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags){
             }
       
         }
-//               while(count_reverse>0){ //отматываем source назад
+//               while(count_reverse>0){ //отматываем source назад but why?
 // (*source)--;
 // count_reverse--;
 // pbuffer--;
