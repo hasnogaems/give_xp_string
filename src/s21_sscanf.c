@@ -311,11 +311,11 @@ void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags){
             }
       
         }
-              while(count_reverse>0){ //отматываем source назад
-(*source)--;
-count_reverse--;
-pbuffer--;
-}
+//               while(count_reverse>0){ //отматываем source назад
+// (*source)--;
+// count_reverse--;
+// pbuffer--;
+// }
 
     }
     buffer_integer=atoi(buffer);
