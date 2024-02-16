@@ -74,7 +74,7 @@ while(**source=='\t')(*source)++;
                 is_octal=1;(*source)++;
                 }
              if(!is_hex&&!is_octal)is_int=1;//пишем в variable только если флаг поднят, если я сделаю int is_int прямо сдесь это плохо, это значит будет переинициализация каждый цикл или норм и оно не будет нагружать программу и инициализирует только 1 раз?
-             while(**source!=' '&&**source!='\0'&&(is_octal ? **source<'8':1)&&(is_hex ? hex_check(source):1)&&(is_int ? is_int_f(**source):1)&&width_check(*Flags)&&!((**source==43||**source==45)&&!start)){ //если не поставить последнее условие в скобки то оно считает все до ? условием, и оно никогда не выполняется, следовательно всегда 1
+             while(!Flags->base.x&&**source!=' '&&**source!='\0'&&(is_octal ? **source<'8':1)&&(is_hex ? hex_check(source):1)&&(is_int ? is_int_f(**source):1)&&width_check(*Flags)&&!((**source==43||**source==45)&&!start)){ //если не поставить последнее условие в скобки то оно считает все до ? условием, и оно никогда не выполняется, следовательно всегда 1
                 *pbuffer=**source;
                 start=0;
                //cannot do that? (&buffer)++;
@@ -97,16 +97,32 @@ while(**source=='\t')(*source)++;
 // pbuffer--;
 // }
     }
-    if(**source==' '||(**source>=0&&**source<=57&&**source!=32)||(**source>=65&&**source<=70)||(**source>=97&&**source<=102)){
-*result=**source;
-Flags->failed=0;
-(*source)++;
-    }
+//     if(Flags->base.x){
+//     if(**source==' '||(**source>=0&&**source<=57&&**source!=32)||(**source>=65&&**source<=70)||(**source>=97&&**source<=102)){
+// *result=**source;
+// Flags->failed=0;
+// (*source)++;
+//     }}
+while(**source==' '||**source=='\n'){(*source)++;} //skip spaces and newlines for %x border case
     buffer_integer=atoi(buffer);
+    while(**source!='\0'&&Flags->base.x&&((**source>=0&&**source<=57&&**source!=32)||(**source>=65&&**source<=70)||(**source>=97&&**source<=102))&&width_check(*Flags)){
+      
+      Flags->failed=0;
+      *pbuffer=**source;
+                
+               //cannot do that? (&buffer)++;
+               //cannot do that? buffer++;
+               //must make char* pbuffer=buffer ?
+                (*source)++;
+                pbuffer++;
+                //count_reverse++;
+                if(Flags->width!=-1)Flags->width--;
+    }
+     *pbuffer='\0';
     //printf("buffer_integer=%d", buffer_integer);
 //long long result;
 if(!Flags->failed&&Flags->asterisk != 1){
-    if(is_hex){
+    if(is_hex||Flags->base.x){
         // char* endptr;
         
         *result = hex_to_dex(buffer, 16, minus, source);
@@ -117,7 +133,7 @@ if(!Flags->failed&&Flags->asterisk != 1){
     if(is_octal){
        *result=hex_to_dex(buffer, 8, minus, source);
     }
-    if(is_int){
+    if(is_int&&!Flags->base.x){
        *result=minus ? -1.0*buffer_integer:1*buffer_integer;
     }
 }
@@ -253,7 +269,7 @@ void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags){
      Flags->failed=1;
     int* variable_adress=va_arg(arg, int*);
     int buffer_integer;
-    while(**source==' ')(*source)++;
+    while(**source==' '||**source=='\n')(*source)++;
     char buffer[1000];
     
     
@@ -268,7 +284,7 @@ void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags){
     }
     if(**source==' '||(**source>=0&&**source<=57&&**source!=32)){
         Flags->failed=0;
-        while(**source!='\0'&&**source!=' '&&is_int_f(**source)){
+        while(**source!='\0'&&**source!=' '&&is_int_f(**source)&&width_check(*Flags)){
             if(**source>=0&&**source<=57&&is_int_f(**source)){
                
                 if(**source=='0'&&is_int_f(*(*source)+1)&&!is_hex){
@@ -277,7 +293,7 @@ void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags){
                 }
              if(!is_hex&&!is_octal)is_int=1;//пишем в variable только если флаг поднят, если я сделаю int is_int прямо сдесь это плохо, это значит будет переинициализация каждый цикл или норм и оно не будет нагружать программу и инициализирует только 1 раз?
              
-             while(**source!=' '&&**source!='\0'&&is_int_f(**source)){
+             while(**source!=' '&&**source!='\0'&&is_int_f(**source)&&width_check(*Flags)){
                 *pbuffer=**source;
                //cannot do that? (&buffer)++;
                //cannot do that? buffer++;
@@ -285,6 +301,7 @@ void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags){
                 (*source)++;
                 pbuffer++;
                 count_reverse++;
+                if(Flags->width!=-1)Flags->width--;
                 //count++;
 
              }
@@ -302,8 +319,8 @@ pbuffer--;
 
     }
     buffer_integer=atoi(buffer);
-    printf("buffer_integer=%d", buffer_integer);
-
+  //  printf("buffer_integer=%d", buffer_integer);
+if(!Flags->asterisk){
     if(is_hex){
         // char* endptr;
         
@@ -317,7 +334,7 @@ pbuffer--;
     if(is_int){
        *variable_adress=hex_to_dex(buffer, 8, minus, source);
     }
-    
+}
 
 }
 
@@ -674,7 +691,7 @@ va_start(args, format);
 flagscanf Flagscanf={0};
 const char* start = source;
 if(*format=='\0'||*source=='\0')count=-1;
-while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){
+while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){ //weird if I remove source check then hex_empty fails
       //printf("here?\n");
       while(*format==' '){
       format++;
@@ -729,7 +746,7 @@ return count;
  void scanfparser_spec(const char **format, flagscanf* Flags){
         
         //format++;
-        while(**format!='\0'&&**format!='%'&&**format!=' '&&**format!='\t'){
+        while(**format!='\0'&&**format!='%'&&**format!=' '&&**format!='\t'&&!Flags->base.format_received){
            // printf("here?:82");
         switch(**format){
            // case'[':
@@ -826,25 +843,32 @@ return count;
         switch(**format){
         case 'c':
             Flags.c=1;  
+            Flags.format_received=1;
             break;  
         case 'd':
             Flags.integer=1;
             Flags.move_format=2;
+            Flags.format_received=1;
             break;
         case 'u':
             Flags.integer=1;  
             Flags.is_unsigned=1; 
+            Flags.format_received=1;
             break;     
         case 's':
             Flags.string=1;
             Flags.move_format=2;
+            Flags.format_received=1;
             break;  
         case 'i':
             Flags.decimal_octal_hex=1;
+            Flags.format_received=1;
             break;   
         case 'x':
         case 'X':
             Flags.decimal_octal_hex=1;
+            Flags.x=1;
+            Flags.format_received=1;
             break;    
         case 'n':
             Flags.n=1;
@@ -853,6 +877,7 @@ return count;
             Flags.decimal_octal_hex=1;
             Flags.is_unsigned=1;  
             Flags.is_ptr=1;
+            Flags.format_received=1;
             break;    
               
         case 'e':
@@ -861,9 +886,11 @@ return count;
         case 'G':
         case 'f':
             Flags.e=1;
+            Flags.format_received=1;
             break; 
         case 'o':
-            Flags.o=1;        
+            Flags.o=1;    
+            Flags.format_received=1;    
         default:
             break;  }
             

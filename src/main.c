@@ -51,17 +51,23 @@ int main(){
  
 //   sscanf(str, "%s%d%p", str1, &a, &p1);
 //   s21_sscanf(str, "%s%d%p", str2, &b, &p2);
- int a1, a2;
-  const char str[] = "F";
-  const char fstr[] = "%X";
-  uint32_t res1 = s21_sscanf(str, fstr, &a1);
-  uint32_t res2 = sscanf(str, fstr, &a2);
+   int a1 = 0, a2 = 5, a3 = 3, a4 = 9;
+  int32_t n1 = 500, n2 = 10000;
 
-printf("uint32_t res1 = s21_sscanf(str, fstr, &a1);\n");
-printf("   s21_sscanf reads: a1 = %X, res1 = %u\n", a1, res1);
+  const char str[] = "123123SkipMePlease!!!!123";
+  const char fstr[] = "%dSkipMePlease!!!!%d %n";
 
-printf("uint32_t res2 = sscanf(str, fstr, &a2);\n");
-printf("   sscanf reads: a2 = %X, res2 = %u\n", a2, res2);
+  int16_t res1 = s21_sscanf(str, fstr, &a1, &a3, &n1);
+  int16_t res2 = sscanf(str, fstr, &a2, &a4, &n2);
+
+
+
+printf("int16_t res1 = s21_sscanf(str, fstr, &a1, &a3, &n1);\n");
+printf("s21_sscanf reads: a1 = %d, a3 = %d, n1 = %d (characters read by s21_sscanf), res1 = %d\n", a1, a3, n1, res1);
+
+printf("int16_t res2 = sscanf(str, fstr, &a2, &a4, &n2);\n");
+printf("sscanf reads: a2 = %d, a4 = %d, n2 = %d, res2 = %d\n", a2, a4, n2, res2);
+
 
 
   

@@ -32,6 +32,8 @@ typedef struct flags{
     int is_ptr;
     int c;
     int n;
+    int x;
+    int format_received;
 
 } flags;
 
@@ -45,6 +47,7 @@ typedef struct flagscanf{
     int width;
     int asterisk;
     const char *start_of_str;
+    
 } flagscanf;
 
 typedef struct {
