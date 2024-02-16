@@ -730,6 +730,19 @@ while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){ //weird if I remove sour
      if(!Flagscanf.failed&&!Flagscanf.asterisk&&!Flagscanf.base.n)count++;
     //if(Flagscanf.failed)count=-1;
     }
+    if(*source=='\0'&&*format!='\0'){
+      while(*format==' '){
+      format++;}
+      while(*format=='\t')format++;
+    
+    if(*format=='%'&&Flagscanf.failed==0){
+        format++;
+      s21_memset(&Flagscanf, 0, sizeof(Flagscanf));
+      set_params(&Flagscanf, &format);
+      scanfparser_spec(&format, &Flagscanf);
+      if(Flagscanf.base.n){
+      if (!Flagscanf.asterisk) *(va_arg(args, int *)) = source - start;}
+    }
 
 
 
@@ -738,10 +751,11 @@ while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){ //weird if I remove sour
 //printf("Flagscanf:\nbase.integer=%d\nbase.string=%d\nfplus=%d\n", Flagscanf.base.integer, Flagscanf.base.string, Flagscanf.fplus);
 //printf("Flagscanf:\nbase->integer=%d\n", Flagscanf.base.integer);
 //if(count==0&&!Flagscanf.asterisk)count=-1;
+    }
 return count;
+
+
 }
-
-
 
  void scanfparser_spec(const char **format, flagscanf* Flags){
         
