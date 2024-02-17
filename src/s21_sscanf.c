@@ -268,7 +268,7 @@ void scanf_write_int(flagscanf* Flags, const char** source, long long int* resul
 void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags){
      Flags->failed=1;
     int* variable_adress=va_arg(arg, int*);
-    int buffer_integer;
+    
     while(**source==' '||**source=='\n')(*source)++;
     char buffer[1000];
     
@@ -318,7 +318,8 @@ void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags){
 // }
 
     }
-    buffer_integer=atoi(buffer);
+    
+    
   //  printf("buffer_integer=%d", buffer_integer);
 if(!Flags->asterisk){
     if(is_hex){
@@ -416,6 +417,7 @@ void sscanf_write_e(va_list arg, const char** source, flagscanf* Flags){
       }
     }
   }
+  free(variable_address);
     
             
     }

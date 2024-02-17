@@ -5,6 +5,12 @@ LIBS = -lm
 in_progress:
 	gcc main.c s21_string.c s21_sscanf.c -lm
 
+test_flags:
+	gcc -Wall -Wextra -Werror -std=c11 s21_string.c s21_sscanf.c test_sscanf.c -lm -lcheck -lpthread -lsubunit	
+
+test_sanitize:
+	gcc s21_string.c s21_sscanf.c test_sscanf.c -lm -lcheck -lpthread -lsubunit	
+
 sanitize:
 	gcc main.c s21_string.c s21_sscanf.c -fsanitize=address -lm
 

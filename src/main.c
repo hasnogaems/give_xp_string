@@ -51,28 +51,19 @@ int main(){
  
 //   sscanf(str, "%s%d%p", str1, &a, &p1);
 //   s21_sscanf(str, "%s%d%p", str2, &b, &p2);
-  int a1 = 0;
-  int a2 = 0;
-  int a4 = 0;
-  int a3 = 0;
-  int n1 = 0;
-  int n2 = 0;
-  int result1 = 0;
-  int result2 = 0;
-  result1 =
-      sscanf("1%% hello world 2%%", "%d%% hello world %d%%%n", &a1, &a2, &n1);
-  result2 = s21_sscanf("1%% hello world 2%%", "%d%% hello world %d%%%n", &a3,
-                       &a4, &n2);
-
-printf("Values after sscanf:\n");
-printf("a1 = %d, a2 = %d, n1 = %d, result1 = %d\n", a1, a2, n1, result1);
-
-printf("\nValues after s21_sscanf:\n");
-printf("a3 = %d, a4 = %d, n2 = %d, result2 = %d\n", a3, a4, n2, result2);
+  unsigned long int a1, a2;
+  const char str[] = "57234";
+  const char fstr[] = "%lo";
+  uint16_t res1 = s21_sscanf(str, fstr, &a1);
+  uint16_t res2 = sscanf(str, fstr, &a2);
 
 
 
+printf("uint16_t res1 = s21_sscanf(str, fstr, &a1);\n");
+printf("s21_sscanf reads: a1 = %lo, res1 = %u\n", a1, res1);
 
+printf("uint16_t res2 = sscanf(str, fstr, &a2);\n");
+printf("sscanf reads: a2 = %lo, res2 = %u\n", a2, res2);
   
 
     return 0;
