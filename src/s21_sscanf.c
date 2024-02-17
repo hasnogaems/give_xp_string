@@ -705,6 +705,7 @@ while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){ //weird if I remove sour
     while(*format=='\t')format++;
     
     if(*format=='%'&&Flagscanf.failed==0){
+      if(*(format+1)=='%'){source++;}
         format++;
        
        s21_memset(&Flagscanf, 0, sizeof(Flagscanf));//reset flags
