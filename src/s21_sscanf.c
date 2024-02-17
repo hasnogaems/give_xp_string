@@ -267,7 +267,7 @@ void scanf_write_int(flagscanf* Flags, const char** source, long long int* resul
 
 void sscanf_write_o(va_list arg, const char** source, flagscanf* Flags){
      Flags->failed=1;
-    int* variable_adress=va_arg(arg, int*);
+   long long int* variable_adress=va_arg(arg, long long int*); //тут был просто int и поэтому в тестах ломалось where a1 holds the expected value 94862942690972 (octal 57234 interpreted as a 64-bit unsigned integer), and a2 holds the value 24220 (octal 57234 interpreted as an unsigned long int, which is likely 32 bits on the test environment).
     
     while(**source==' '||**source=='\n')(*source)++;
     char buffer[1000];

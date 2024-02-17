@@ -51,7 +51,8 @@ int main(){
  
 //   sscanf(str, "%s%d%p", str1, &a, &p1);
 //   s21_sscanf(str, "%s%d%p", str2, &b, &p2);
-  unsigned long int a1, a2;
+uint64_t a1;
+  unsigned long int a2;
   const char str[] = "57234";
   const char fstr[] = "%lo";
   uint16_t res1 = s21_sscanf(str, fstr, &a1);
@@ -61,6 +62,7 @@ int main(){
 
 printf("uint16_t res1 = s21_sscanf(str, fstr, &a1);\n");
 printf("s21_sscanf reads: a1 = %lo, res1 = %u\n", a1, res1);
+  
 
 printf("uint16_t res2 = sscanf(str, fstr, &a2);\n");
 printf("sscanf reads: a2 = %lo, res2 = %u\n", a2, res2);
