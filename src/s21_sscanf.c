@@ -451,7 +451,7 @@ void width_function(const char **format, int *width) {
 
 int is_int_f(char c){
     int x=0;
-    if(c>=0&&c<=57&&c!=32)
+    if(c>=0&&c<=57&&c!=32&&c!=37)
     x=1;
     return x;
 }
@@ -703,14 +703,17 @@ while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){ //weird if I remove sour
       format++; source++;
     }
     while(*format=='\t')format++;
+    if(*format!='%'&&!Flagscanf.failed)Flagscanf.failed=1; //чиним последний тест
     
     if(*format=='%'&&Flagscanf.failed==0){
-      if(*(format+1)=='%'){source++;}
-        format++;
+      format++;
        
        s21_memset(&Flagscanf, 0, sizeof(Flagscanf));//reset flags
+       
        // Flagscanf.width=0;
         set_params(&Flagscanf, &format);
+        if(*format=='%'){source++;format++;Flagscanf.failed=1;} //fixed format_check last test not counting writted correctly, also it is implementation of %%
+        
       //  printf("test");
         //Flagscanf=scanfparser_flags(&format); // заполняем от ' ' до 0 почему не растет указатель я разименовываю 1 раз, значит должен расти формат
         scanfparser_spec(&format, &Flagscanf); // заполняем спецификаторы например d или s
@@ -800,7 +803,7 @@ return count;
 
  
    void scanf_concat_type(flagscanf* Flags, va_list arg, const char** source){
-   
+  //  if(!Flags->base.integer&&!Flags->base.string&&!Flags->base.decimal_octal_hex&&!Flags->base.e&&!Flags->base.o&&!Flags->base.c)Flags->failed=1;
     
     long long int* result=(long long int*)calloc(1, sizeof(long double));
     if(Flags->base.integer==1){
