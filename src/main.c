@@ -1,12 +1,31 @@
-#include <stdio.h>
-#include <string.h>
-#include "s21_string.h"
-int main(){
-    char string[300];
-    char word[]="WORD";
-    int number=100;
-    sprintf(string, "word is %s number is %d\n", word, number);
-    printf("printf result is:%s", string);
-    s21_sprintf(string, "number is %d, word is %s yo\n", number, word);
-    printf("s21_printf result is:%s", string);
+#include "s21_sscanf.h"
+#include "s21_tests.h"
+void run_testcase(Suite *testcase) {
+  static int counter_testcase = 1;
+  if (counter_testcase > 1) putchar('\n');
+  printf("CURRENT TEST: %d\n", counter_testcase);
+  counter_testcase++;
+
+  SRunner *sr = srunner_create(testcase);
+
+  srunner_set_fork_status(sr, CK_NOFORK);
+  srunner_run_all(sr, CK_NORMAL);
+
+  srunner_free(sr);
 }
+
+
+void run_tests(void) {
+  Suite *list_cases[] = {
+      suite_sscanf(), s21_string_suite(), NULL};
+  for (Suite **current_testcase = list_cases; *current_testcase != NULL;
+       current_testcase++) {
+    run_testcase(*current_testcase);
+  }
+}
+
+int main(void) {
+  run_tests();
+  return 0;
+}
+

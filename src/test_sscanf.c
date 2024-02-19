@@ -2387,21 +2387,3 @@ Suite *suite_sscanf(void) {
   suite_add_tcase(s, tc);
   return s;
 }
-
-int main(void) {
-  int failed = 0;
-
-    Suite *suite = suite_sscanf();
-    SRunner *runner = srunner_create(suite);
-
-    
-    srunner_run_all(runner, CK_VERBOSE);
-
-    failed += srunner_ntests_failed(runner);
-    srunner_free(runner);
-    printf("\n");
-  
-  printf("========= FAILED: %d =========\n", failed);
-
-  return failed == 0 ? 0 : 1;
-}

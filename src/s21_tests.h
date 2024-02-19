@@ -30,8 +30,11 @@ Suite *suite_trim(void);
 Suite *suite_insert(void);
 Suite *suite_sprintf(void);
 Suite *suite_sscanf(void);
+Suite *s21_string_suite(void);
 
 void run_tests(void);
 void run_testcase(Suite *testcase);
+
+
 
 #endif
