@@ -758,6 +758,7 @@ while(*format!='\0'&&*source!='\0'&&!Flagscanf.failed){ //weird if I remove sour
 //printf("Flagscanf:\nbase->integer=%d\n", Flagscanf.base.integer);
 //if(count==0&&!Flagscanf.asterisk)count=-1;
     }
+    va_end(args);
 return count;
 
 
