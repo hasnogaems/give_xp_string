@@ -825,7 +825,7 @@ void *s21_trim(const char *src, const char *trim_chars) {
       }
     if (flag) {
       result_str[result_len] = src[i];
-      printf("Результат: \"%c\"\n", src[i]);
+     
       result_len++;
     }
     flag = 1;

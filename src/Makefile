@@ -1,15 +1,20 @@
+.PHONY: all s21_string.a s21_string.o
 CC = gcc
 CFLAGS = -std=c11 -Wall -Wextra -Werror
 CCOVTEST= -fprofile-arcs -ftest-coverage
 LIBS = -lm
+
 
 all: s21_string.a
 
 s21_string.a: s21_string.o
 	ar rcs $@ $^
 
-s21_string.o: s21_string.c s21_string.h
-	$(CC) $(CFLAGS) -c $< -o $@
+browntod:
+	gcc s21_string.c s21_sscanf.c test_sscanf.c -lm -lcheck -lpthread -lsubunit	
+
+s21_string.o: s21_string.c s21_sscanf.c s21_string.h
+	$(CC) $(CFLAGS) -c s21_string.c s21_sscanf.c
 
 test: test_s21_string.o s21_string.o
 	$(CC) $(CFLAGS) $(CCOVTEST) $^ $(LIBS) -o $@ -lcheck -lm -lpthread -lsubunit
