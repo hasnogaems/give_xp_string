@@ -11,7 +11,13 @@ s21_string.a: s21_string.o
 	ar rcs $@ $^
 
 test:
-	gcc main.c s21_string.c s21_sscanf.c test_sscanf.c s21_string_tests.c -lcheck -lm -lpthread -lsubunit -o test
+	gcc main.c s21_string.c s21_sscanf.c test_sscanf.c s21_string_tests.c -lcheck -lm -lpthread -lsubunit -g -o test
+
+test2:
+	gcc s21_string.c s21_string_tests2.c -lcheck -lm -lpthread -lsubunit -g -o test
+
+test3:
+	gcc main2.c s21_string.c s21_sscanf.c test_sscanf.c s21_string_tests.c -lcheck -lm -lpthread -lsubunit -g -o test
 
 s21_string.o: s21_string.c s21_sscanf.c s21_string.h
 	$(CC) $(CFLAGS) -c s21_string.c s21_sscanf.c
