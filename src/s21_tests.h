@@ -5,8 +5,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
-
 Suite *suite_memchr(void);
 Suite *suite_memcmp(void);
 Suite *suite_memcpy(void);
@@ -34,7 +32,5 @@ Suite *s21_string_suite(void);
 
 void run_tests(void);
 void run_testcase(Suite *testcase);
-
-
 
 #endif

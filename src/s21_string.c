@@ -751,7 +751,7 @@ int s21_sprintf(char *str, const char *format, ...) {
   int result = str - start_str;
   return result;
 }
-//C#
+// C#
 void *s21_to_upper(const char *str) {
   if (str == S21_NULL) return S21_NULL;
 
@@ -825,7 +825,7 @@ void *s21_trim(const char *src, const char *trim_chars) {
       }
     if (flag) {
       result_str[result_len] = src[i];
-     
+
       result_len++;
     }
     flag = 1;

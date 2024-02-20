@@ -1,9 +1,10 @@
-#include "s21_tests.h"
 #include <check.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "s21_tests.h"
 int main(void) {
   Suite *suite = s21_string_suite();
   SRunner *suite_runner = srunner_create(suite);

@@ -1,8 +1,8 @@
 #include <stdarg.h>
 
-#include "s21_tests.h"
-#include "s21_string.h"
 #include "s21_sscanf.h"
+#include "s21_string.h"
+#include "s21_tests.h"
 
 #define BUFF_SIZE 512
 

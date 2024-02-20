@@ -3007,4 +3007,3 @@ Suite *s21_string_suite(void) {
 
   return suite;
 }
-
